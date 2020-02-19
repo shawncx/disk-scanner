@@ -2,26 +2,25 @@ package com.msxichen.diskscanner;
 
 import java.util.Arrays;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.atomic.AtomicLong;
 
+import com.msxichen.diskscanner.model.DirectoryTree;
+
 public class FileProcessor implements Runnable {
 
-	private String baseDir;
 	private PriorityBlockingQueue<FileSnap> fileQueue;
-	private ConcurrentHashMap<String, Long> dirSizeMap;
+	private DirectoryTree dirTree;
 	private BlockingQueue<FileSnap> candidates;
 	private AtomicLong fileCount;
 	private AtomicLong dirCount;
 	private String[] excludedDirs;
 
-	public FileProcessor(String baseDir, BlockingQueue<FileSnap> candidates, PriorityBlockingQueue<FileSnap> fileQueue,
-			ConcurrentHashMap<String, Long> dirSizeMap, AtomicLong fileCount, AtomicLong dirCount,
+	public FileProcessor(BlockingQueue<FileSnap> candidates, PriorityBlockingQueue<FileSnap> fileQueue,
+			DirectoryTree dirTree, AtomicLong fileCount, AtomicLong dirCount,
 			String[] excludedDirs) {
-		this.baseDir = baseDir;
 		this.fileQueue = fileQueue;
-		this.dirSizeMap = dirSizeMap;
+		this.dirTree = dirTree;
 		this.candidates = candidates;
 		this.fileCount = fileCount;
 		this.dirCount = dirCount;
@@ -61,19 +60,8 @@ public class FileProcessor implements Runnable {
 			fileQueue.poll();
 		}
 
-		String path = file.getAbsolutePath();
-		String[] pathSegs = path.split("\\\\");
-		StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < pathSegs.length - 1; i++) {
-			if (i > 0) {
-				sb.append("\\");
-			}
-			sb.append(pathSegs[i]);
-			if (sb.length() < baseDir.length()) {
-				continue;
-			}
-			dirSizeMap.compute(sb.toString(),
-					(key, value) -> value == null ? file.getSizeInByte() : value + file.getSizeInByte());
-		}
+		int dirIndex = file.getAbsolutePath().lastIndexOf('\\');
+		String path = file.getAbsolutePath().substring(0, dirIndex);
+		dirTree.increaseSizeDescade(path, file.getSizeInByte());
 	}
 }

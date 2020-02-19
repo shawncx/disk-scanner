@@ -13,5 +13,12 @@ public class DiskScannerTest {
 		excludedDirs = null;
 		scanner.scan(baseDir, excludedDirs);
 	}
+	
+	@Test
+	public void testFullDir() {
+		String baseDir = "C:\\Users\\xichen\\Desktop\\dbeaver";
+		DiskScanner scanner = new DiskScanner(5);
+		scanner.scan(baseDir, null);
+	}
 
 }

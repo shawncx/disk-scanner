@@ -3,6 +3,7 @@ package com.msxichen.diskscanner;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.PriorityQueue;
 import java.util.concurrent.BlockingQueue;
@@ -13,10 +14,12 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.atomic.AtomicLong;
 
+import com.msxichen.diskscanner.model.DirectoryTree;
+
 public class DiskScanner {
 
 	private PriorityBlockingQueue<FileSnap> fileQueue;
-	private ConcurrentHashMap<String, Long> dirSizeMap;
+	private DirectoryTree dirTree;
 	private AtomicLong fileCount;
 	private AtomicLong dirCount;
 
@@ -30,21 +33,22 @@ public class DiskScanner {
 
 		fileQueue = new PriorityBlockingQueue<FileSnap>(100, new FileSnapSizeComparator());
 		candidates = new LinkedBlockingQueue<FileSnap>();
-		dirSizeMap = new ConcurrentHashMap<String, Long>();
-		
+
 		fileCount = new AtomicLong();
 		dirCount = new AtomicLong();
 	}
 
 	public void scan(String basePath, String[] excludedDirs) {
+		dirTree = new DirectoryTree(basePath);
+
 		File file = new File(basePath);
 		candidates.offer(new FileSnap(file));
 		for (int i = 0; i < threadNum; i++) {
-			consumerPool.submit(new FileProcessor(basePath, candidates, fileQueue, dirSizeMap, fileCount, dirCount, excludedDirs));
+			consumerPool.submit(new FileProcessor(candidates, fileQueue, dirTree, fileCount, dirCount, excludedDirs));
 		}
-		
+
 		long startTime = System.currentTimeMillis();
-		
+
 		int emptyQueueCount = 0;
 		while (true) {
 			System.out.println("Candidate queue size: " + candidates.size());
@@ -56,10 +60,11 @@ public class DiskScanner {
 			if (emptyQueueCount == 3) {
 				System.out.println("Candidate queue keeps empty. Finish!");
 				consumerPool.shutdownNow();
-				System.out.println("File count: " + fileCount.longValue() + ", " + "Directory count: " + dirCount.longValue());
+				System.out.println(
+						"File count: " + fileCount.longValue() + ", " + "Directory count: " + dirCount.longValue());
 				System.out.println("Time cost: " + (System.currentTimeMillis() - startTime) / 1000 + " seconds.");
-				printTopSizeDirectory(100);
-				printTopSizeFile(100);
+				printDirectoryBFS();
+//				printTopSizeFile(100);
 				break;
 			}
 
@@ -87,17 +92,10 @@ public class DiskScanner {
 		System.out.println("*********************************************************");
 	}
 
-	private void printTopSizeDirectory(int top) {
+	private void printDirectoryBFS() {
 		System.out.println("*********************************************************");
-		System.out.println("Top " + top + " size Directory: ");
-		PriorityQueue<FileSnap> queue = new PriorityQueue<>(10000, new DirectorySizeComparator());
-		dirSizeMap.keySet().forEach((path) -> queue.offer(new FileSnap(path, dirSizeMap.getOrDefault(path, 0l))));
-		int i = 0;
-		while (i < top && !queue.isEmpty()) {
-			FileSnap dir = queue.poll();
-			System.out.println(dir.getAbsolutePath() + ", size: " + dir.getSizeMegaByte() + "mb");
-			i++;
-		}
+		System.out.println("Directory size: ");
+		dirTree.printTreeBFS();
 		System.out.println("*********************************************************");
 	}
 
