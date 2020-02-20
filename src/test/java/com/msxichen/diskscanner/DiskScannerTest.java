@@ -7,10 +7,24 @@ public class DiskScannerTest {
 	@Test
 	public void testScan() {
 		DiskScanner scanner = new DiskScanner(5);
-		String baseDir = "C:\\Users\\xichen\\tool\\apache-maven-3.6.3\\lib";
+		String baseDir = "D:\\SSIS\\Rel\\SQL17\\SQL17_SSIS";
+//		String baseDir = "D:\\DsMainDev";
 		String[] excludedDirs = new String[] {
-				"C:\\Users\\xichen\\eclipse-workspace\\diskscanner\\target\\classes" };
-		excludedDirs = null;
+				"D:\\SSIS\\Rel\\SQL17\\SQL17_SSIS\\localization",
+				"D:\\SSIS\\Rel\\SQL17\\SQL17_SSIS\\Tools",
+				"D:\\SSIS\\Rel\\SQL17\\SQL17_SSIS\\TestTools",
+				"D:\\SSIS\\Rel\\SQL17\\SQL17_SSIS\\optimization", 
+				"D:\\SSIS\\Rel\\SQL17\\SQL17_SSIS\\Test",
+				"D:\\SSIS\\Rel\\SQL17\\SQL17_SSIS\\Testtestsrc\\dts\\Test\\PackageRepository",
+				"D:\\SSIS\\Rel\\SQL17\\SQL17_SSIS\\Testtestsrc\\dts\\UnitTest",
+				"D:\\SSIS\\Rel\\SQL17\\SQL17_SSIS\\Testtestsrc\\crossgrouptools",
+				"D:\\SSIS\\Rel\\SQL17\\SQL17_SSIS\\Testtestsrc\\DP",
+				"D:\\SSIS\\Rel\\SQL17\\SQL17_SSIS\\Testtestsrc\\komodo\\yukon\\SRC\\Tools",
+				"D:\\SSIS\\Rel\\SQL17\\SQL17_SSIS\\Testtestsrc\\komodo\\yukon\\bin",
+				"D:\\SSIS\\Rel\\SQL17\\SQL17_SSIS\\Testtestsrc\\komodo\\yukon\\Common_input",
+				"D:\\SSIS\\Rel\\SQL17\\SQL17_SSIS\\Testtestsrc\\komodo\\yukon\\setup",
+				"D:\\SSIS\\Rel\\SQL17\\SQL17_SSIS\\_BuildCommon"};
+//		excludedDirs = null;
 		scanner.scan(baseDir, excludedDirs);
 	}
 	

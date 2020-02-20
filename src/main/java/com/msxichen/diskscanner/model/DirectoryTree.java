@@ -1,5 +1,8 @@
 package com.msxichen.diskscanner.model;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.LinkedList;
 
 public class DirectoryTree {
@@ -40,6 +43,26 @@ public class DirectoryTree {
 				cur.getChildern().forEach((path, child) -> queue.offer(child));
 			}
 		}
+	}
+	
+	public void wirteTreeBFS(String fileName) throws IOException {
+		BufferedWriter writer = new BufferedWriter(new FileWriter(fileName));
+		LinkedList<DirectoryNode> queue = new LinkedList<>();
+		queue.offer(root);
+		queue.offer(null);
+		int depth = 0;
+		writer.append("******Level " + depth + "******\r\n");
+		while (queue.size() > 1) {
+			DirectoryNode cur = queue.poll();
+			if (cur == null) {
+				queue.offer(cur);
+				writer.append("******Level " + ++depth + "******\r\n");
+			} else {
+				writer.append(cur.toString()).append("\r\n");
+				cur.getChildern().forEach((path, child) -> queue.offer(child));
+			}
+		}
+		writer.close();
 	}
 
 	private void increaseSizeDescade(DirectoryNode node, StringBuilder path, String[] pathSegs, int pathIndex,

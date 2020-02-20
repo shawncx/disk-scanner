@@ -1,6 +1,7 @@
 package com.msxichen.diskscanner;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.LinkedList;
@@ -64,6 +65,11 @@ public class DiskScanner {
 						"File count: " + fileCount.longValue() + ", " + "Directory count: " + dirCount.longValue());
 				System.out.println("Time cost: " + (System.currentTimeMillis() - startTime) / 1000 + " seconds.");
 				printDirectoryBFS();
+				try {
+					dirTree.wirteTreeBFS("D:\\myworkspace\\dirTree.txt");
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 //				printTopSizeFile(100);
 				break;
 			}
