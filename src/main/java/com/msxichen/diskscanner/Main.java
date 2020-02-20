@@ -1,26 +1,34 @@
 package com.msxichen.diskscanner;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.msxichen.diskscanner.model.ScanConfiguration;
 
 public class Main {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		if (args == null || args.length == 0) {
-			System.out.println("Input base dir");
+			System.out.println("Input configuration path");
 			System.exit(0);
 		}
-		String baseDir = args[0];
-		String[] excludedDirs = null;
-		if (args.length > 1) {
-			excludedDirs = new String[args.length - 1];
-			IntStream.range(1, args.length).mapToObj((i) -> args[i].toLowerCase()).toArray(String[]::new);
+
+		BufferedReader bufferedReader = new BufferedReader(new FileReader(args[0]));
+		StringBuilder configJson = new StringBuilder();
+		String line = null;
+		while ((line = bufferedReader.readLine()) != null) {
+			configJson.append(line).append("\r\n");
 		}
-		DiskScanner scanner = new DiskScanner(5);
-		scanner.scan(baseDir, excludedDirs);
+		
+		ObjectMapper objectMapper = new ObjectMapper();
+		ScanConfiguration config = objectMapper.readValue(configJson.toString(), ScanConfiguration.class);
+
+		DiskScanner scanner = new DiskScanner(config);
+		scanner.scan();
 		System.out.println("Fin");
+		bufferedReader.close();
 		System.exit(0);
 	}
 

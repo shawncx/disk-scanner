@@ -4,6 +4,7 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.LinkedList;
+import java.util.function.Consumer;
 
 public class DirectoryTree {
 
@@ -40,6 +41,24 @@ public class DirectoryTree {
 				System.out.println("******Level " + ++depth + "******");
 			} else {
 				System.out.println(cur.toString());
+				cur.getChildern().forEach((path, child) -> queue.offer(child));
+			}
+		}
+	}
+	
+	public void visitTreeBFS(DirectoryTreeLevelVisitor levelVisitor, DirectoryTreeNodeVisitor nodeVisitor) {
+		LinkedList<DirectoryNode> queue = new LinkedList<>();
+		queue.offer(root);
+		queue.offer(null);
+		int depth = 0;
+		levelVisitor.visit(depth);
+		while (queue.size() > 1) {
+			DirectoryNode cur = queue.poll();
+			if (cur == null) {
+				queue.offer(cur);
+				levelVisitor.visit(++depth);
+			} else {
+				nodeVisitor.visit(cur);
 				cur.getChildern().forEach((path, child) -> queue.offer(child));
 			}
 		}

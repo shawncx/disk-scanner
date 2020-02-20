@@ -1,0 +1,7 @@
+{
+    "threadNum": 5,
+    "baseDir": "C:\\Users\\xichen\\tool\\apache-maven-3.6.3",
+    "excludedPaths": [],
+    "outputTypes": ["console", "file"],
+    "outputFile": "C:\\Users\\xichen\\tool\\testoutput\\testScanFullDirOutput.txt"
+}
