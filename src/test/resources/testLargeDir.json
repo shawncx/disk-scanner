@@ -1,0 +1,14 @@
+{
+	"threadNum": 5,
+	"baseDir": "C:",
+	"excludedPaths": [],
+	"outputTypes": [
+		"file"
+	],
+	"outputSummaryTo": "C:\\Users\\xichen\\tool\\testoutput\\testLargeDir-summary.txt",
+	"outputFileInfoTo": "C:\\Users\\xichen\\tool\\testoutput\\testLargeDir-fileinfo.txt",
+	"outputDirInfoTo": "C:\\Users\\xichen\\tool\\testoutput\\testLargeDir-dirinfo.txt",
+	"fileSizeUnit": "kb",
+    "dirSizeUnit": "gb",
+	"fileTopCount": -1
+}

@@ -1,11 +1,13 @@
-package com.msxichen.diskscanner;
+package com.msxichen.diskscanner.core;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.atomic.AtomicLong;
 
-import com.msxichen.diskscanner.model.DirectoryTree;
+import com.msxichen.diskscanner.core.model.DirectoryTree;
+import com.msxichen.diskscanner.core.model.FileSnap;
 
 public class FileProcessor implements Runnable {
 
@@ -15,16 +17,18 @@ public class FileProcessor implements Runnable {
 	private AtomicLong fileCount;
 	private AtomicLong dirCount;
 	private String[] excludedDirs;
+	private long fileQueueSize;
 
 	public FileProcessor(BlockingQueue<FileSnap> candidates, PriorityBlockingQueue<FileSnap> fileQueue,
 			DirectoryTree dirTree, AtomicLong fileCount, AtomicLong dirCount,
-			String[] excludedDirs) {
+			String[] excludedDirs, long fileQueueSize) {
 		this.fileQueue = fileQueue;
 		this.dirTree = dirTree;
 		this.candidates = candidates;
 		this.fileCount = fileCount;
 		this.dirCount = dirCount;
 		this.excludedDirs = excludedDirs == null ? new String[0] : excludedDirs;
+		this.fileQueueSize = fileQueueSize;
 	}
 
 	public void run() {
@@ -41,6 +45,8 @@ public class FileProcessor implements Runnable {
 				}
 			} catch (InterruptedException e) {
 //				e.printStackTrace();
+			} catch (Exception e) {
+				e.printStackTrace();
 			}
 		}
 	}
@@ -51,17 +57,20 @@ public class FileProcessor implements Runnable {
 		if (shouldExclude) {
 			return;
 		}
-		Arrays.stream(dir.listFiles()).forEach((file) -> candidates.offer(new FileSnap(file)));
+		File[] subFiles = dir.listFiles();
+		if (subFiles != null) {
+			for (File file : dir.listFiles()) {
+				candidates.offer(new FileSnap(file));
+			}
+		}
 	}
 
 	private void processFile(FileSnap file) {
 		fileQueue.offer(file);
-		if (fileQueue.size() > 100) {
+		if (fileQueue.size() > fileQueueSize) {
 			fileQueue.poll();
 		}
+		dirTree.increaseSizeDescade(file.getAbsolutePath(), file.getSizeInByte());
 
-		int dirIndex = file.getAbsolutePath().lastIndexOf('\\');
-		String path = file.getAbsolutePath().substring(0, dirIndex);
-		dirTree.increaseSizeDescade(path, file.getSizeInByte());
 	}
 }

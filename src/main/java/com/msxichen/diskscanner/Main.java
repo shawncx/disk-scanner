@@ -1,11 +1,10 @@
 package com.msxichen.diskscanner;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.msxichen.diskscanner.model.ScanConfiguration;
+import com.msxichen.diskscanner.core.DiskScanner;
+import com.msxichen.diskscanner.core.model.ScanConfiguration;
+import com.msxichen.diskscanner.io.ScanConfigurationReader;
 
 public class Main {
 
@@ -15,20 +14,11 @@ public class Main {
 			System.exit(0);
 		}
 
-		BufferedReader bufferedReader = new BufferedReader(new FileReader(args[0]));
-		StringBuilder configJson = new StringBuilder();
-		String line = null;
-		while ((line = bufferedReader.readLine()) != null) {
-			configJson.append(line).append("\r\n");
-		}
-		
-		ObjectMapper objectMapper = new ObjectMapper();
-		ScanConfiguration config = objectMapper.readValue(configJson.toString(), ScanConfiguration.class);
+		ScanConfiguration config = new ScanConfigurationReader().read(args[0]);
 
 		DiskScanner scanner = new DiskScanner(config);
 		scanner.scan();
 		System.out.println("Fin");
-		bufferedReader.close();
 		System.exit(0);
 	}
 

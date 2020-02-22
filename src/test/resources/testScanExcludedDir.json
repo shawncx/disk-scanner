@@ -1,0 +1,17 @@
+{
+	"threadNum": 5,
+	"baseDir": "C:\\Users\\xichen\\tool\\apache-maven-3.6.3",
+	"excludedPaths": [
+		"C:\\Users\\xichen\\tool\\apache-maven-3.6.3\\boot"
+	],
+	"outputTypes": [
+		"console",
+		"file"
+	],
+	"outputSummaryTo": "C:\\Users\\xichen\\tool\\testoutput\\testScanExcludedDir-summary.txt",
+	"outputFileInfoTo": "C:\\Users\\xichen\\tool\\testoutput\\testScanExcludedDir-fileinfo.txt",
+	"outputDirInfoTo": "C:\\Users\\xichen\\tool\\testoutput\\testScanExcludedDir-dirinfo.txt",
+	"fileSizeUnit": "kb",
+	"dirSizeUnit": "mb",
+	"fileTopCount": -1
+}

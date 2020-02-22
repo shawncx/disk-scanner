@@ -1,4 +1,4 @@
-package com.msxichen.diskscanner;
+package com.msxichen.diskscanner.core.model;
 
 import java.io.File;
 
@@ -15,7 +15,6 @@ public class FileSnap {
 		this.absolutPathInLowerCase = this.absolutePath.toLowerCase();
 		this.isDirectory = file.isDirectory();
 		if (file.isDirectory()) {
-			this.sizeInByte = file.length();
 			this.subFiles = file.listFiles();
 		} else {
 			sizeInByte = file.length();
@@ -34,11 +33,6 @@ public class FileSnap {
 	public boolean isDirectory() {
 		return isDirectory;
 	}
-
-	public File[] getSubFiles() {
-		return subFiles;
-	}
-
 	public String getAbsolutePath() {
 		return absolutePath;
 	}

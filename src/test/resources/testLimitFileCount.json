@@ -1,0 +1,14 @@
+{
+	"threadNum": 5,
+	"baseDir": "C:\\Users\\xichen\\tool\\apache-maven-3.6.3",
+	"excludedPaths": [],
+	"outputTypes": [
+		"file"
+	],
+	"outputSummaryTo": "C:\\Users\\xichen\\tool\\testoutput\\testLimitFileCount-summary.txt",
+	"outputFileInfoTo": "C:\\Users\\xichen\\tool\\testoutput\\testLimitFileCount-fileinfo.txt",
+	"outputDirInfoTo": "C:\\Users\\xichen\\tool\\testoutput\\testLimitFileCount-dirinfo.txt",
+	"fileSizeUnit": "kb",
+    "dirSizeUnit": "mb",
+	"fileTopCount": 2
+}
