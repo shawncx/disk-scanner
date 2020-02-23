@@ -2,7 +2,8 @@
 	"threadNum": 5,
 	"baseDir": "C:\\Users\\xichen\\tool\\apache-maven-3.6.3",
 	"excludedPaths": [
-		"C:\\Users\\xichen\\tool\\apache-maven-3.6.3\\boot"
+		"C:\\Users\\xichen\\tool\\apache-maven-3.6.3\\boot",
+		"*.jar"
 	],
 	"outputTypes": [
 		"console",

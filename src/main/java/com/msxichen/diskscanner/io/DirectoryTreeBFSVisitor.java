@@ -60,7 +60,7 @@ public class DirectoryTreeBFSVisitor implements IDirectoryTreeBFSVisitor {
 		}
 		StringBuilder sb = new StringBuilder();
 		sb.append("Path: ").append(node.getAbsolutePath()).append("\r\n");
-		sb.append("Size: ").append(Utilies.formatSize(size)).append(sizeUnit).append("\r\n");
+		sb.append("Size: ").append(Utilities.formatSize(size)).append(sizeUnit).append("\r\n");
 		return sb.toString();
 	}
 

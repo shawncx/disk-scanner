@@ -56,4 +56,8 @@ public class DirectoryTree {
 		increaseSizeDescade(node.getChildern().get(nextPath.toString()), nextPath, pathSegs, pathIndex + 1, sizeInByte);
 	}
 
+	public DirectoryNode getRoot() {
+		return root;
+	}
+	
 }

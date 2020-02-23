@@ -9,11 +9,13 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.regex.Pattern;
 
 import com.msxichen.diskscanner.core.model.DirectoryTree;
 import com.msxichen.diskscanner.core.model.FileSnap;
 import com.msxichen.diskscanner.core.model.ScanConfiguration;
 import com.msxichen.diskscanner.io.DefaultScanResultWriter;
+import com.msxichen.diskscanner.io.Utilities;
 
 public class DiskScanner {
 
@@ -23,6 +25,7 @@ public class DiskScanner {
 	private DirectoryTree dirTree;
 	private AtomicLong fileCount;
 	private AtomicLong dirCount;
+	private Pattern[] excludedPatterns;
 
 	private ExecutorService consumerPool;
 	private BlockingQueue<FileSnap> candidates;
@@ -46,8 +49,8 @@ public class DiskScanner {
 		File file = new File(base);
 		candidates.offer(new FileSnap(file));
 		for (int i = 0; i < configuration.getThreadNum(); i++) {
-			consumerPool.submit(new FileProcessor(candidates, fileQueue, dirTree, fileCount, dirCount,
-					configuration.getExcludedPaths(), fileQueueSize));
+			consumerPool.submit(new FileProcessor(candidates, fileQueue, dirTree, fileCount, dirCount, excludedPatterns,
+					fileQueueSize));
 		}
 
 		long startTime = System.currentTimeMillis();
@@ -90,6 +93,15 @@ public class DiskScanner {
 		dirTree = new DirectoryTree(configuration.getBaseDir());
 		fileQueueSize = configuration.getFileTopCount() <= 0 ? DEFAULT_FILE_QUEUE_SIZE
 				: configuration.getFileTopCount();
+
+		if (configuration.getExcludedPaths() != null) {
+			excludedPatterns = new Pattern[configuration.getExcludedPaths().length];
+			for (int i = 0; i < configuration.getExcludedPaths().length; i++) {
+				String regex = Utilities.wildcardToRegex(configuration.getExcludedPaths()[i]);
+				Pattern p = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
+				excludedPatterns[i] = p;
+			}
+		}
 	}
 
 	private void writeResult(long startTime, long endTime) {

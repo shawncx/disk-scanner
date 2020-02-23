@@ -1,10 +1,10 @@
 package com.msxichen.diskscanner.core;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.regex.Pattern;
 
 import com.msxichen.diskscanner.core.model.DirectoryTree;
 import com.msxichen.diskscanner.core.model.FileSnap;
@@ -16,18 +16,18 @@ public class FileProcessor implements Runnable {
 	private BlockingQueue<FileSnap> candidates;
 	private AtomicLong fileCount;
 	private AtomicLong dirCount;
-	private String[] excludedDirs;
+	private Pattern[] excludedPatterns;
 	private long fileQueueSize;
 
 	public FileProcessor(BlockingQueue<FileSnap> candidates, PriorityBlockingQueue<FileSnap> fileQueue,
 			DirectoryTree dirTree, AtomicLong fileCount, AtomicLong dirCount,
-			String[] excludedDirs, long fileQueueSize) {
+			Pattern[] excludedPatterns, long fileQueueSize) {
 		this.fileQueue = fileQueue;
 		this.dirTree = dirTree;
 		this.candidates = candidates;
 		this.fileCount = fileCount;
 		this.dirCount = dirCount;
-		this.excludedDirs = excludedDirs == null ? new String[0] : excludedDirs;
+		this.excludedPatterns = excludedPatterns == null ? new Pattern[0] : excludedPatterns;
 		this.fileQueueSize = fileQueueSize;
 	}
 
@@ -36,6 +36,10 @@ public class FileProcessor implements Runnable {
 			FileSnap file = null;
 			try {
 				file = candidates.take();
+				if (isExcluded(file)) {
+					continue;
+				}
+				
 				if (file.isDirectory()) {
 					dirCount.incrementAndGet();
 					processDirectory(file);
@@ -50,13 +54,17 @@ public class FileProcessor implements Runnable {
 			}
 		}
 	}
+	
+	private boolean isExcluded(FileSnap file) {
+		for (Pattern pattern : excludedPatterns) {
+			if (pattern.matcher(file.getAbsolutePath()).matches()) {
+				return true;
+			}
+		}
+		return false;
+	}
 
 	private void processDirectory(FileSnap dir) {
-		boolean shouldExclude = Arrays.stream(excludedDirs)
-				.anyMatch((exDir) -> dir.getAbsolutPathInLowerCase().equalsIgnoreCase(exDir));
-		if (shouldExclude) {
-			return;
-		}
 		File[] subFiles = dir.listFiles();
 		if (subFiles != null) {
 			for (File file : dir.listFiles()) {

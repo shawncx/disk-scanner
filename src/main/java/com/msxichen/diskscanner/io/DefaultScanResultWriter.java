@@ -55,8 +55,8 @@ public class DefaultScanResultWriter implements IScanResultWriter, AutoCloseable
 
 	@Override
 	public void writeFileInfo(PriorityBlockingQueue<FileSnap> fileQueue) {
-		writeLine(fileInfoWriter, "*********************************************************");
 		writeLine(fileInfoWriter, "Top size File: ");
+		writeLine(fileInfoWriter, "*********************************************************");
 		List<FileSnap> list = new ArrayList<>();
 		while (!fileQueue.isEmpty()) {
 			list.add(fileQueue.poll());
@@ -67,7 +67,7 @@ public class DefaultScanResultWriter implements IScanResultWriter, AutoCloseable
 			double size = getSizeWithUnit(file);
 			StringBuilder msg = new StringBuilder();
 			msg.append("Path: ").append(file.getAbsolutePath()).append("\r\n");
-			msg.append("Size: ").append(Utilies.formatSize(size)).append(fileUnit);
+			msg.append("Size: ").append(Utilities.formatSize(size)).append(fileUnit);
 			writeLine(fileInfoWriter, msg.toString());
 		}
 	}

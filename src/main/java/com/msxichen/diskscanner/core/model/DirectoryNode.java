@@ -1,7 +1,5 @@
 package com.msxichen.diskscanner.core.model;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class DirectoryNode {
