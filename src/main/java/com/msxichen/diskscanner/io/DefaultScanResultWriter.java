@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.concurrent.PriorityBlockingQueue;
 
 import com.msxichen.diskscanner.core.IScanResultWriter;
+import com.msxichen.diskscanner.core.model.DirectoryNode;
 import com.msxichen.diskscanner.core.model.DirectoryTree;
 import com.msxichen.diskscanner.core.model.FileSnap;
 import com.msxichen.diskscanner.core.model.ScanConfiguration;
@@ -43,9 +44,13 @@ public class DefaultScanResultWriter implements IScanResultWriter, AutoCloseable
 	}
 
 	@Override
-	public void writeSummery(long startTimeInMillsecond, long endTimeInMillsecond, long fileCount, long dirCount) {
-		writeLine(summaryWriter, "File count: " + fileCount + ", " + "Directory count: " + dirCount);
-		writeLine(summaryWriter, "Time cost: " + (endTimeInMillsecond - startTimeInMillsecond) / 1000 + " seconds.");
+	public void writeSummery(long timeCostInMillsecond, long fileCount, long dirCount, DirectoryTree dirTree) {
+		writeLine(summaryWriter, "Time cost: " + timeCostInMillsecond / 1000 + " seconds.");
+		writeLine(summaryWriter, "File count: " + fileCount);
+		writeLine(summaryWriter, "Directory count: " + dirCount);
+		double size = getSizeWithUnit(dirTree.getRoot());
+		writeLine(summaryWriter, "Root directory: " + dirTree.getRoot().getAbsolutePath());
+		writeLine(summaryWriter, "Size: " + Utilities.formatSize(size) + fileUnit);
 	}
 
 	@Override
@@ -105,6 +110,18 @@ public class DefaultScanResultWriter implements IScanResultWriter, AutoCloseable
 			return file.getSizeMegaByte();
 		} else if (ScanConfiguration.FILE_SIZE_UNIT_KB.equalsIgnoreCase(fileUnit)) {
 			return file.getSizeKiloByte();
+		} else {
+			return 0;
+		}
+	}
+
+	private double getSizeWithUnit(DirectoryNode node) {
+		if (ScanConfiguration.FILE_SIZE_UNIT_GB.equalsIgnoreCase(fileUnit)) {
+			return node.getSizeInGigaByte();
+		} else if (ScanConfiguration.FILE_SIZE_UNIT_MB.equalsIgnoreCase(fileUnit)) {
+			return node.getSizeMegaByte();
+		} else if (ScanConfiguration.FILE_SIZE_UNIT_KB.equalsIgnoreCase(fileUnit)) {
+			return node.getSizeKiloByte();
 		} else {
 			return 0;
 		}

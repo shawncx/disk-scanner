@@ -106,7 +106,7 @@ public class DiskScanner {
 
 	private void writeResult(long startTime, long endTime) {
 		try (DefaultScanResultWriter writer = new DefaultScanResultWriter(configuration)) {
-			writer.writeSummery(startTime, endTime, fileCount.longValue(), dirCount.longValue());
+			writer.writeSummery(endTime - startTime, fileCount.longValue(), dirCount.longValue(), dirTree);
 			writer.writeDirectoryInfo(dirTree);
 			writer.writeFileInfo(fileQueue);
 		} catch (Exception e) {

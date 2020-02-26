@@ -27,12 +27,24 @@ public class DirectoryNode {
 		return absolutePath;
 	}
 
+	public ConcurrentHashMap<String, DirectoryNode> getChildern() {
+		return children;
+	}
+	
 	public long getSizeInByte() {
 		return sizeInByte;
 	}
+	
+	public double getSizeKiloByte() {
+		return sizeInByte / 1024d;
+	}
 
-	public ConcurrentHashMap<String, DirectoryNode> getChildern() {
-		return children;
+	public double getSizeMegaByte() {
+		return sizeInByte / 1024d / 1024d;
+	}
+
+	public double getSizeInGigaByte() {
+		return sizeInByte / 1024d / 1024d / 1024d;
 	}
 
 }

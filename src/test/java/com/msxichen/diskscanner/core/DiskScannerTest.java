@@ -40,5 +40,5 @@ public class DiskScannerTest {
 		DiskScanner scanner = new DiskScanner(config);
 		scanner.scan();
 	}
-
+	
 }
