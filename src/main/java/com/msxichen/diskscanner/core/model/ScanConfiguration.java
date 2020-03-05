@@ -13,24 +13,19 @@ public class ScanConfiguration {
 	private String baseDir;
 	private String[] excludedPaths;
 	private String[] outputTypes;
-	private String outputSummaryTo;
-	private String outputFileInfoTo;
-	private String outputDirInfoTo;
+	private String fileOutputLoc;
 	private String fileSizeUnit;
 	private String dirSizeUnit;
 	private long fileTopCount;
-
+	
 	public ScanConfiguration(int threadNum, String baseDir, String[] excludedPaths, String[] outputTypes,
-			String outputSummaryTo, String outputFileInfoTo, String outputDirInfoTo, String fileSizeUnit,
-			String dirSizeUnit, long fileTopCount) {
+			String fileOutputLoc, String fileSizeUnit, String dirSizeUnit, long fileTopCount) {
 		super();
 		this.threadNum = threadNum;
 		this.baseDir = baseDir;
 		this.excludedPaths = excludedPaths;
 		this.outputTypes = outputTypes;
-		this.outputSummaryTo = outputSummaryTo;
-		this.outputFileInfoTo = outputFileInfoTo;
-		this.outputDirInfoTo = outputDirInfoTo;
+		this.fileOutputLoc = fileOutputLoc;
 		this.fileSizeUnit = fileSizeUnit;
 		this.dirSizeUnit = dirSizeUnit;
 		this.fileTopCount = fileTopCount;
@@ -56,16 +51,8 @@ public class ScanConfiguration {
 		return outputTypes;
 	}
 
-	public String getOutputSummaryTo() {
-		return outputSummaryTo;
-	}
-
-	public String getOutputFileInfoTo() {
-		return outputFileInfoTo;
-	}
-
-	public String getOutputDirInfoTo() {
-		return outputDirInfoTo;
+	public String getFileOutputLoc() {
+		return fileOutputLoc;
 	}
 
 	public long getFileTopCount() {

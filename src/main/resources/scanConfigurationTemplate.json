@@ -3,9 +3,7 @@
     "baseDir": "",
     "excludedPaths": [],
     "outputTypes": [],
-    "outputSummaryTo": "",
-    "outputFileInfoTo": "",
-    "outputDirInfoTo": "",
+    "fileOutputLoc": "",
     "fileSizeUnit": "",
     "dirSizeUnit": "",
     "fileTopCount": -1

@@ -5,40 +5,39 @@ import java.io.IOException;
 import org.junit.Test;
 
 import com.msxichen.diskscanner.core.model.ScanConfiguration;
+import com.msxichen.diskscanner.core.model.ScanContext;
 import com.msxichen.diskscanner.io.ScanConfigurationReader;
 
 public class DiskScannerTest {
-
+	
 	@Test
 	public void testScanExcludedDir() throws IOException {
-		ScanConfigurationReader reader = new ScanConfigurationReader();
-		ScanConfiguration config = reader.read("src/test/resources/testScanExcludedDir.json");
-		DiskScanner scanner = new DiskScanner(config);
-		scanner.scan();
+		runScan("src/test/resources/testScanExcludedDir.json");
 	}
 
 	@Test
 	public void testFullDir() throws IOException {
-		ScanConfigurationReader reader = new ScanConfigurationReader();
-		ScanConfiguration config = reader.read("src/test/resources/testScanFullDir.json");
-		DiskScanner scanner = new DiskScanner(config);
-		scanner.scan();
+		runScan("src/test/resources/testScanFullDir.json");
 	}
-	
+
 	@Test
 	public void testLimitFileCount() throws IOException {
-		ScanConfigurationReader reader = new ScanConfigurationReader();
-		ScanConfiguration config = reader.read("src/test/resources/testLimitFileCount.json");
-		DiskScanner scanner = new DiskScanner(config);
-		scanner.scan();
+		runScan("src/test/resources/testLimitFileCount.json");
 	}
-	
+
 	@Test
 	public void testLargeDir() throws IOException {
-		ScanConfigurationReader reader = new ScanConfigurationReader();
-		ScanConfiguration config = reader.read("src/test/resources/testLargeDir.json");
-		DiskScanner scanner = new DiskScanner(config);
-		scanner.scan();
+		runScan("src/test/resources/testLargeDir.json");
 	}
-	
+
+	private void runScan(String configPath) throws IOException {
+		ScanConfigurationReader reader = new ScanConfigurationReader();
+		ScanConfiguration config = reader.read(configPath);
+
+		ScanContext context = reader.buildScanContext(config);
+		DiskScanner scanner = new DiskScanner();
+
+		scanner.scan(context);
+	}
+
 }

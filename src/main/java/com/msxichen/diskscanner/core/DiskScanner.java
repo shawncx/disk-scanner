@@ -11,15 +11,16 @@ import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.regex.Pattern;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.msxichen.diskscanner.core.model.DirectoryTree;
 import com.msxichen.diskscanner.core.model.FileSnap;
-import com.msxichen.diskscanner.core.model.ScanConfiguration;
+import com.msxichen.diskscanner.core.model.ScanContext;
 import com.msxichen.diskscanner.io.DefaultScanResultWriter;
 import com.msxichen.diskscanner.io.Utilities;
 
 public class DiskScanner {
-
-	private ScanConfiguration configuration;
 
 	private PriorityBlockingQueue<FileSnap> fileQueue;
 	private DirectoryTree dirTree;
@@ -32,57 +33,43 @@ public class DiskScanner {
 
 	private long fileQueueSize = DEFAULT_FILE_QUEUE_SIZE;
 
+	private static final Logger LOGGER = LogManager.getLogger();
+
 	private static final long DEFAULT_FILE_QUEUE_SIZE = 1000;
+	private static final int EMPTY_QUEUE_WAIT_COUNT = 3;
+	private static final long QUEUE_POLLING_INTERVAL_MILLISECOND = 1000;
 
-	public DiskScanner(ScanConfiguration config) {
-		this.configuration = config;
-	}
-
-	public void scan() throws IOException {
-
-		initialize();
-
-		// For case like: C:. It cannot be recognized.
-		String base = configuration.getBaseDir().endsWith(":") ? configuration.getBaseDir() + "\\"
-				: configuration.getBaseDir();
-
-		File file = new File(base);
-		candidates.offer(new FileSnap(file));
-		for (int i = 0; i < configuration.getThreadNum(); i++) {
-			consumerPool.submit(new FileProcessor(candidates, fileQueue, dirTree, fileCount, dirCount, excludedPatterns,
-					fileQueueSize));
-		}
-
-		long startTime = System.currentTimeMillis();
+	public void scan(ScanContext context) throws IOException {
+		
+		LOGGER.trace("Start scan");
+		initialize(context);
 
 		int emptyQueueCount = 0;
 		while (true) {
-			System.out.println("Candidate queue size: " + candidates.size());
+			LOGGER.trace("Candidate queue size: " + candidates.size());
 			if (candidates.size() == 0) {
 				emptyQueueCount++;
 			} else {
 				emptyQueueCount = 0;
 			}
-			if (emptyQueueCount == 3) {
-				System.out.println("Candidate queue keeps empty. Finish!");
-				long endTime = System.currentTimeMillis();
-
+			if (emptyQueueCount == EMPTY_QUEUE_WAIT_COUNT) {
+				LOGGER.trace("Candidate queue keeps empty. Finish!");
 				consumerPool.shutdownNow();
 
-				writeResult(startTime, endTime);
+				writeResult(context, System.currentTimeMillis());
 				break;
 			}
 
 			try {
-				Thread.sleep(1000);
+				Thread.sleep(QUEUE_POLLING_INTERVAL_MILLISECOND);
 			} catch (InterruptedException e) {
-				e.printStackTrace();
+				LOGGER.error(e);
 			}
 		}
 	}
 
-	private void initialize() {
-		consumerPool = Executors.newFixedThreadPool(configuration.getThreadNum());
+	private void initialize(ScanContext context) {
+		consumerPool = Executors.newFixedThreadPool(context.getThreadNum());
 
 		fileQueue = new PriorityBlockingQueue<FileSnap>(100, new FileSnapSizeComparator());
 		candidates = new LinkedBlockingQueue<FileSnap>();
@@ -90,27 +77,31 @@ public class DiskScanner {
 		fileCount = new AtomicLong();
 		dirCount = new AtomicLong();
 
-		dirTree = new DirectoryTree(configuration.getBaseDir());
-		fileQueueSize = configuration.getFileTopCount() <= 0 ? DEFAULT_FILE_QUEUE_SIZE
-				: configuration.getFileTopCount();
+		dirTree = new DirectoryTree(context.getBaseDir());
+		fileQueueSize = context.getFileTopCount() <= 0 ? DEFAULT_FILE_QUEUE_SIZE : context.getFileTopCount();
 
-		if (configuration.getExcludedPaths() != null) {
-			excludedPatterns = new Pattern[configuration.getExcludedPaths().length];
-			for (int i = 0; i < configuration.getExcludedPaths().length; i++) {
-				String regex = Utilities.wildcardToRegex(configuration.getExcludedPaths()[i]);
-				Pattern p = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
-				excludedPatterns[i] = p;
-			}
+		excludedPatterns = new Pattern[context.getExcludedPaths().length];
+		for (int i = 0; i < context.getExcludedPaths().length; i++) {
+			String regex = Utilities.wildcardToRegex(context.getExcludedPaths()[i]);
+			Pattern p = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
+			excludedPatterns[i] = p;
+		}
+
+		File baseDir = new File(context.getBaseDir());
+		candidates.offer(new FileSnap(baseDir));
+		for (int i = 0; i < context.getThreadNum(); i++) {
+			consumerPool.submit(new FileProcessor(candidates, fileQueue, dirTree, fileCount, dirCount, excludedPatterns,
+					fileQueueSize));
 		}
 	}
 
-	private void writeResult(long startTime, long endTime) {
-		try (DefaultScanResultWriter writer = new DefaultScanResultWriter(configuration)) {
-			writer.writeSummery(endTime - startTime, fileCount.longValue(), dirCount.longValue(), dirTree);
+	private void writeResult(ScanContext context, long endTime) {
+		try (DefaultScanResultWriter writer = new DefaultScanResultWriter(context, endTime)) {
+			writer.writeSummery(fileCount.longValue(), dirCount.longValue(), dirTree);
 			writer.writeDirectoryInfo(dirTree);
 			writer.writeFileInfo(fileQueue);
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOGGER.error(e);
 		}
 	}
 

@@ -3,12 +3,10 @@
 	"baseDir": "C:",
 	"excludedPaths": [],
 	"outputTypes": [
-		"file"
+		"File"
 	],
-	"outputSummaryTo": "C:\\Users\\xichen\\tool\\testoutput\\testLargeDir-summary.txt",
-	"outputFileInfoTo": "C:\\Users\\xichen\\tool\\testoutput\\testLargeDir-fileinfo.txt",
-	"outputDirInfoTo": "C:\\Users\\xichen\\tool\\testoutput\\testLargeDir-dirinfo.txt",
-	"fileSizeUnit": "kb",
-    "dirSizeUnit": "gb",
+	"fileOutputLoc": "C:\\Users\\xichen\\tool\\testoutput",
+	"fileSizeUnit": "Mb",
+	"dirSizeUnit": "Gb",
 	"fileTopCount": -1
 }

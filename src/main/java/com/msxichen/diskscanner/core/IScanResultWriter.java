@@ -7,7 +7,7 @@ import com.msxichen.diskscanner.core.model.FileSnap;
 
 public interface IScanResultWriter {
 
-	public void writeSummery(long timeCostInMillsecond, long fileCount, long dirCount, DirectoryTree dirTree);
+	public void writeSummery(long fileCount, long dirCount, DirectoryTree dirTree);
 
 	public void writeDirectoryInfo(DirectoryTree dirTree);
 

@@ -3,12 +3,10 @@
 	"baseDir": "C:\\Users\\xichen\\tool\\apache-maven-3.6.3",
 	"excludedPaths": [],
 	"outputTypes": [
-		"file"
+		"File"
 	],
-	"outputSummaryTo": "C:\\Users\\xichen\\tool\\testoutput\\testLimitFileCount-summary.txt",
-	"outputFileInfoTo": "C:\\Users\\xichen\\tool\\testoutput\\testLimitFileCount-fileinfo.txt",
-	"outputDirInfoTo": "C:\\Users\\xichen\\tool\\testoutput\\testLimitFileCount-dirinfo.txt",
-	"fileSizeUnit": "kb",
-    "dirSizeUnit": "mb",
+	"fileOutputLoc": "C:\\Users\\xichen\\tool\\testoutput",
+	"fileSizeUnit": "Kb",
+	"dirSizeUnit": "Mb",
 	"fileTopCount": 2
 }

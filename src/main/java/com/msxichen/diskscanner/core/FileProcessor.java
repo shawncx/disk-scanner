@@ -6,6 +6,9 @@ import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.regex.Pattern;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import com.msxichen.diskscanner.core.model.DirectoryTree;
 import com.msxichen.diskscanner.core.model.FileSnap;
 
@@ -18,6 +21,8 @@ public class FileProcessor implements Runnable {
 	private AtomicLong dirCount;
 	private Pattern[] excludedPatterns;
 	private long fileQueueSize;
+	
+	private static final Logger LOGGER = LogManager.getLogger();
 
 	public FileProcessor(BlockingQueue<FileSnap> candidates, PriorityBlockingQueue<FileSnap> fileQueue,
 			DirectoryTree dirTree, AtomicLong fileCount, AtomicLong dirCount,
@@ -32,6 +37,7 @@ public class FileProcessor implements Runnable {
 	}
 
 	public void run() {
+		LOGGER.trace("FileProcessor is started.");
 		while (true) {
 			FileSnap file = null;
 			try {
@@ -48,9 +54,9 @@ public class FileProcessor implements Runnable {
 					processFile(file);
 				}
 			} catch (InterruptedException e) {
-//				e.printStackTrace();
+				LOGGER.trace("FileProcessor is interupted.");
 			} catch (Exception e) {
-				e.printStackTrace();
+				LOGGER.error(e);
 			}
 		}
 	}

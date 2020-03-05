@@ -3,13 +3,11 @@
 	"baseDir": "C:\\Users\\xichen\\tool\\apache-maven-3.6.3",
 	"excludedPaths": [],
 	"outputTypes": [
-		"console",
-		"file"
+		"Console",
+		"File"
 	],
-	"outputSummaryTo": "C:\\Users\\xichen\\tool\\testoutput\\testScanFullDirOutput-summary.txt",
-	"outputFileInfoTo": "C:\\Users\\xichen\\tool\\testoutput\\testScanFullDirOutput-fileinfo.txt",
-	"outputDirInfoTo": "C:\\Users\\xichen\\tool\\testoutput\\testScanFullDirOutput-dirinfo.txt",
-	"fileSizeUnit": "kb",
-    "dirSizeUnit": "mb",
+	"fileOutputLoc": "C:\\Users\\xichen\\tool\\testoutput",
+	"fileSizeUnit": "Kb",
+    "dirSizeUnit": "Mb",
 	"fileTopCount": -1
 }
