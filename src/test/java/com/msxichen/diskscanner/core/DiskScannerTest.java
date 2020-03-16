@@ -2,12 +2,14 @@ package com.msxichen.diskscanner.core;
 
 import java.io.IOException;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.msxichen.diskscanner.core.model.ScanConfiguration;
 import com.msxichen.diskscanner.core.model.ScanContext;
 import com.msxichen.diskscanner.io.ScanConfigurationReader;
 
+@Ignore
 public class DiskScannerTest {
 	
 	@Test

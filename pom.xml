@@ -69,18 +69,6 @@
           <version>2.22.1</version>
         </plugin>
         <plugin>
-          <artifactId>maven-jar-plugin</artifactId>
-          <version>3.0.2</version>
-          <configuration>
-            <archive>
-              <manifest>
-                <!-- Jar file entry point -->
-                <mainClass>com.msxichen.diskscanner.Main</mainClass>
-              </manifest>
-            </archive>
-          </configuration>
-        </plugin>
-        <plugin>
           <artifactId>maven-install-plugin</artifactId>
           <version>2.5.2</version>
         </plugin>
@@ -98,6 +86,19 @@
           <version>3.0.0</version>
         </plugin>
         <plugin>
+          <artifactId>maven-jar-plugin</artifactId>
+          <version>3.0.2</version>
+          <configuration>
+            <archive>
+              <manifest>
+                <addClasspath>true</addClasspath>
+                <classpathPrefix>dependency/</classpathPrefix>
+                <mainClass>com.msxichen.diskscanner.Main</mainClass>
+              </manifest>
+            </archive>
+          </configuration>
+        </plugin>
+        <plugin>
           <artifactId>maven-dependency-plugin</artifactId>
           <version>3.0.2</version>
           <executions>
@@ -110,7 +111,7 @@
               <configuration>
                 <!-- exclude junit, we need runtime dependency only -->
                 <includeScope>runtime</includeScope>
-                <outputDirectory>${project.build.directory}/dependency-jars/</outputDirectory>
+                <outputDirectory>${project.build.directory}/dependency/</outputDirectory>
               </configuration>
             </execution>
           </executions>
