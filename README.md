@@ -103,23 +103,31 @@ mvn package dependency:copy-dependencies
 ### Configuration
 
 Prepare configuration file
+1. **threadNum**: Thread number used to scan disk. Recommand to set core number + 1
+2. **baseDir**: Root directory for scan
+3. **excludedPaths**: File/Folder list which excluded from scan. Wildcard is supported
+4. **outputTypes**: The way to output scan result. Support values: *Console* and *File*
+5. **fileOutputLoc**: If *outputTypes* contains *File*, specify the folder to put output files
+6. **fileSizeUnit**: File output size unit. Support values: *Kb*, *Mb*, *Gb*
+7. **dirSizeUnit**: Folder output size unit. Support values: *Kb*, *Mb*, *Gb*
+8. **dirSizeUnit**: Top N size file should be included in output. *-1* means all files.
 
 ```json
 {
-	"threadNum": 5, // Thread number used to scan disk. Recommand to set core number + 1
-	"baseDir": "C:\\Users\\xichen\\tool",  // Root directory for scan
-	"excludedPaths": [  // File/Folder list which excluded from scan. Wildcard is supported
+	"threadNum": 5,
+	"baseDir": "C:\\Users\\xichen\\tool",
+	"excludedPaths": [
 		"C:\\Users\\xichen\\tool\\boot",
 		"*.jar"
 	],
-	"outputTypes": [  // The way to output scan result. Support values: "Console" and "File"
+	"outputTypes": [
 		"Console",
 		"File"
 	],
-	"fileOutputLoc": "C:\\Users\\xichen\\testoutput",  // If "outputTypes" contains "File", specify the folder to put output files
-	"fileSizeUnit": "Kb",  // File output size unit. Support values: "Kb", "Mb", "Gb"
-	"dirSizeUnit": "Mb",  // File output size unit. Support values: "Kb", "Mb", "Gb"
-	"fileTopCount": -1  // Top N size file should be included in output. -1 means all files.
+	"fileOutputLoc": "C:\\Users\\xichen\\testoutput",
+	"fileSizeUnit": "Kb",
+	"dirSizeUnit": "Mb",
+	"fileTopCount": -1 
 }
 ```
 
@@ -152,23 +160,23 @@ Contributions are what make the open source community such an amazing place to b
 
 
 <!-- LICENSE -->
-## License
+<!-- ## License
 
-Distributed under the MIT License. See `LICENSE` for more information.
+Distributed under the MIT License. See `LICENSE` for more information. -->
 
 
 
 <!-- CONTACT -->
-## Contact
+<!-- ## Contact
 
 Your Name - [@your_twitter](https://twitter.com/your_username) - email@example.com
 
-Project Link: [https://github.com/your_username/repo_name](https://github.com/your_username/repo_name)
+Project Link: [https://github.com/your_username/repo_name](https://github.com/your_username/repo_name) -->
 
 
 
 <!-- ACKNOWLEDGEMENTS -->
-## Acknowledgements
+<!-- ## Acknowledgements
 * [GitHub Emoji Cheat Sheet](https://www.webpagefx.com/tools/emoji-cheat-sheet)
 * [Img Shields](https://shields.io)
 * [Choose an Open Source License](https://choosealicense.com)
@@ -179,7 +187,7 @@ Project Link: [https://github.com/your_username/repo_name](https://github.com/yo
 * [Smooth Scroll](https://github.com/cferdinandi/smooth-scroll)
 * [Sticky Kit](http://leafo.net/sticky-kit)
 * [JVectorMap](http://jvectormap.com)
-* [Font Awesome](https://fontawesome.com)
+* [Font Awesome](https://fontawesome.com) -->
 
 
 
@@ -187,7 +195,7 @@ Project Link: [https://github.com/your_username/repo_name](https://github.com/yo
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[contributors-shield]: https://img.shields.io/github/contributors/othneildrew/Best-README-Template.svg?style=flat-square
+<!-- [contributors-shield]: https://img.shields.io/github/contributors/othneildrew/Best-README-Template.svg?style=flat-square
 [contributors-url]: https://github.com/othneildrew/Best-README-Template/graphs/contributors
 [forks-shield]: https://img.shields.io/github/forks/othneildrew/Best-README-Template.svg?style=flat-square
 [forks-url]: https://github.com/othneildrew/Best-README-Template/network/members
@@ -199,4 +207,4 @@ Project Link: [https://github.com/your_username/repo_name](https://github.com/yo
 [license-url]: https://github.com/othneildrew/Best-README-Template/blob/master/LICENSE.txt
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=flat-square&logo=linkedin&colorB=555
 [linkedin-url]: https://linkedin.com/in/othneildrew
-[product-screenshot]: images/screenshot.png
+[product-screenshot]: images/screenshot.png -->
