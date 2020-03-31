@@ -5,18 +5,18 @@ import java.io.IOException;
 
 import com.msxichen.diskscanner.core.IDirectoryTreeBFSVisitor;
 import com.msxichen.diskscanner.core.model.DirectoryNode;
-import com.msxichen.diskscanner.core.model.ScanConfiguration;
+import com.msxichen.diskscanner.core.model.OutputUnit;
 
-public class DirectoryTreeBFSVisitor implements IDirectoryTreeBFSVisitor {
+public class DirectoryTreeVisitor implements IDirectoryTreeBFSVisitor {
 
 	private boolean consoleOutput;
 	private BufferedWriter fileWriter;
-	private String sizeUnit;
+	private OutputUnit outputUnit;
 
-	public DirectoryTreeBFSVisitor(boolean consoleOutput, BufferedWriter fileWriter, String sizeUnit) {
+	public DirectoryTreeVisitor(boolean consoleOutput, BufferedWriter fileWriter, OutputUnit outputUnit) {
 		this.consoleOutput = consoleOutput;
 		this.fileWriter = fileWriter;
-		this.sizeUnit = sizeUnit;
+		this.outputUnit = outputUnit;
 	}
 
 	@Override
@@ -51,16 +51,16 @@ public class DirectoryTreeBFSVisitor implements IDirectoryTreeBFSVisitor {
 
 	private String formatNode(DirectoryNode node) {
 		double size = 0;
-		if (ScanConfiguration.FILE_SIZE_UNIT_GB.equalsIgnoreCase(sizeUnit)) {
+		if (OutputUnit.Gb == outputUnit) {
 			size = node.getSizeInByte() / 1024d / 1024d / 1024d;
-		} else if (ScanConfiguration.FILE_SIZE_UNIT_MB.equalsIgnoreCase(sizeUnit)) {
+		} else if (OutputUnit.Mb == outputUnit) {
 			size = node.getSizeInByte() / 1024d / 1024d;
-		} else if (ScanConfiguration.FILE_SIZE_UNIT_KB.equalsIgnoreCase(sizeUnit)) {
+		} else if (OutputUnit.Kb == outputUnit) {
 			size = node.getSizeInByte() / 1024d;
 		}
 		StringBuilder sb = new StringBuilder();
 		sb.append("Path: ").append(node.getAbsolutePath()).append("\r\n");
-		sb.append("Size: ").append(Utilities.formatSize(size)).append(sizeUnit).append("\r\n");
+		sb.append("Size: ").append(Utilities.formatSize(size)).append(outputUnit).append("\r\n");
 		return sb.toString();
 	}
 

@@ -15,7 +15,7 @@ import com.msxichen.diskscanner.core.model.DirectoryNode;
 import com.msxichen.diskscanner.core.model.DirectoryTree;
 import com.msxichen.diskscanner.core.model.FileSnap;
 import com.msxichen.diskscanner.core.model.OutputType;
-import com.msxichen.diskscanner.core.model.ScanConfiguration;
+import com.msxichen.diskscanner.core.model.OutputUnit;
 import com.msxichen.diskscanner.core.model.ScanContext;
 
 public class DefaultScanResultWriter implements IScanResultWriter, AutoCloseable {
@@ -24,9 +24,6 @@ public class DefaultScanResultWriter implements IScanResultWriter, AutoCloseable
 	private BufferedWriter summaryWriter;
 	private BufferedWriter fileInfoWriter;
 	private BufferedWriter dirInfoWriter;
-
-	private String fileUnit;
-	private String dirUnit;
 	
 	private ScanContext context;
 	private long endTime;
@@ -54,12 +51,12 @@ public class DefaultScanResultWriter implements IScanResultWriter, AutoCloseable
 		writeLine(summaryWriter, "Directory count: " + dirCount);
 		double size = getSizeWithUnit(dirTree.getRoot());
 		writeLine(summaryWriter, "Root directory: " + dirTree.getRoot().getAbsolutePath());
-		writeLine(summaryWriter, "Size: " + Utilities.formatSize(size) + dirUnit);
+		writeLine(summaryWriter, "Size: " + Utilities.formatSize(size) + context.getDirOutputUnit());
 	}
 
 	@Override
 	public void writeDirectoryInfo(DirectoryTree dirTree) {
-		dirTree.retrieveBFS(new DirectoryTreeBFSVisitor(consoleOutput, dirInfoWriter, dirUnit));
+		dirTree.retrieveBFS(new DirectoryTreeVisitor(consoleOutput, dirInfoWriter, context.getDirOutputUnit()));
 	}
 
 	@Override
@@ -76,7 +73,7 @@ public class DefaultScanResultWriter implements IScanResultWriter, AutoCloseable
 			double size = getSizeWithUnit(file);
 			StringBuilder msg = new StringBuilder();
 			msg.append("Path: ").append(file.getAbsolutePath()).append("\r\n");
-			msg.append("Size: ").append(Utilities.formatSize(size)).append(fileUnit);
+			msg.append("Size: ").append(Utilities.formatSize(size)).append(context.getFileOutputUnit());
 			writeLine(fileInfoWriter, msg.toString());
 		}
 	}
@@ -84,12 +81,15 @@ public class DefaultScanResultWriter implements IScanResultWriter, AutoCloseable
 	@Override
 	public void close() throws Exception {
 		if (summaryWriter != null) {
+			System.out.println("Write summary info into " + context.getSummaryOutputPath().toString());
 			summaryWriter.close();
 		}
 		if (fileInfoWriter != null) {
+			System.out.println("Write file info into " + context.getFileInfoOutputPath().toString());
 			fileInfoWriter.close();
 		}
 		if (dirInfoWriter != null) {
+			System.out.println("Write directory info into " + context.getDirInfoOutputPath().toString());
 			dirInfoWriter.close();
 		}
 	}
@@ -108,11 +108,11 @@ public class DefaultScanResultWriter implements IScanResultWriter, AutoCloseable
 	}
 
 	private double getSizeWithUnit(FileSnap file) {
-		if (ScanConfiguration.FILE_SIZE_UNIT_GB.equalsIgnoreCase(fileUnit)) {
+		if (OutputUnit.Gb == context.getFileOutputUnit()) {
 			return file.getSizeInGigaByte();
-		} else if (ScanConfiguration.FILE_SIZE_UNIT_MB.equalsIgnoreCase(fileUnit)) {
+		} else if (OutputUnit.Mb == context.getFileOutputUnit()) {
 			return file.getSizeMegaByte();
-		} else if (ScanConfiguration.FILE_SIZE_UNIT_KB.equalsIgnoreCase(fileUnit)) {
+		} else if (OutputUnit.Kb == context.getFileOutputUnit()) {
 			return file.getSizeKiloByte();
 		} else {
 			return 0;
@@ -120,11 +120,11 @@ public class DefaultScanResultWriter implements IScanResultWriter, AutoCloseable
 	}
 
 	private double getSizeWithUnit(DirectoryNode node) {
-		if (ScanConfiguration.FILE_SIZE_UNIT_GB.equalsIgnoreCase(dirUnit)) {
+		if (OutputUnit.Gb == context.getDirOutputUnit()) {
 			return node.getSizeInGigaByte();
-		} else if (ScanConfiguration.FILE_SIZE_UNIT_MB.equalsIgnoreCase(dirUnit)) {
+		} else if (OutputUnit.Mb == context.getDirOutputUnit()) {
 			return node.getSizeMegaByte();
-		} else if (ScanConfiguration.FILE_SIZE_UNIT_KB.equalsIgnoreCase(dirUnit)) {
+		} else if (OutputUnit.Kb == context.getDirOutputUnit()) {
 			return node.getSizeKiloByte();
 		} else {
 			return 0;
