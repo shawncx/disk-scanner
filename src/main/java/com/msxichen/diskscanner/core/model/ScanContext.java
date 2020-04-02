@@ -1,7 +1,7 @@
 package com.msxichen.diskscanner.core.model;
 
 import java.nio.file.Path;
-import java.util.Date;
+import java.time.Instant;
 import java.util.Set;
 
 public class ScanContext {
@@ -18,7 +18,7 @@ public class ScanContext {
 	private OutputUnit dirOutputUnit;
 	private long fileTopCount;
 
-	private Date startTime;
+	private Instant startInstant;
 
 	public ScanContext() {
 		super();
@@ -88,12 +88,12 @@ public class ScanContext {
 		this.fileTopCount = fileTopCount;
 	}
 
-	public Date getStartTime() {
-		return startTime;
+	public Instant getStartInstant() {
+		return startInstant;
 	}
 
-	public void setStartTime(Date startTime) {
-		this.startTime = startTime;
+	public void setStartInstant(Instant startInstant) {
+		this.startInstant = startInstant;
 	}
 
 	public Path getSummaryOutputPath() {

@@ -1,5 +1,7 @@
 package com.msxichen.diskscanner.core;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -9,26 +11,32 @@ import com.msxichen.diskscanner.core.model.ScanProgress;
 public class DiskScannerAsync extends AbsDiskScanner {
 
 	private ScanProgress progress;
-	private long endTime;
 
 	private static final Logger LOGGER = LogManager.getLogger();
 
 	@Override
 	public void scan(ScanContext context) {
 		LOGGER.trace("Start scan");
-		progress = new ScanProgress();
-		initialize(context);
+		onInitialize(context);
+		onLaunchScan(context);
 
 		new Thread(new ScanMonitor(progress)).start();
 	}
 
-	public ScanProgress getProgress() {
-		return progress;
+	@Override
+	protected void onInitialize(ScanContext context) {
+		super.onInitialize(context);
+		progress = new ScanProgress();
 	}
 
 	@Override
-	protected long getEndTime() {
-		return endTime;
+	protected void onFinish() {
+		super.onFinish();
+		progress.setDone(true);
+	}
+
+	public ScanProgress getProgress() {
+		return progress;
 	}
 
 	private class ScanMonitor implements Runnable {
@@ -53,14 +61,12 @@ public class DiskScannerAsync extends AbsDiskScanner {
 				}
 				if (emptyQueueCount == EMPTY_QUEUE_WAIT_COUNT) {
 					LOGGER.trace("Candidate queue keeps empty. Finish!");
-					consumerPool.shutdownNow();
-					progress.setDone(true);
-					endTime = System.currentTimeMillis();
+					onFinish();
 					break;
 				}
 
 				try {
-					Thread.sleep(QUEUE_POLLING_INTERVAL_MILLISECOND);
+					TimeUnit.MILLISECONDS.sleep(QUEUE_POLLING_INTERVAL_MILLISECOND);
 				} catch (InterruptedException e) {
 					LOGGER.error(e);
 				}

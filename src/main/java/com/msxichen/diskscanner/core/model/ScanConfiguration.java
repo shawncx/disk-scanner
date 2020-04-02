@@ -2,13 +2,6 @@ package com.msxichen.diskscanner.core.model;
 
 public class ScanConfiguration {
 
-	public static final String OUTPUT_TYPE_CONSOLE = "console";
-	public static final String OUTPUT_TYPE_FILE = "file";
-
-	public static final String FILE_SIZE_UNIT_KB = "kb";
-	public static final String FILE_SIZE_UNIT_MB = "mb";
-	public static final String FILE_SIZE_UNIT_GB = "gb";
-
 	private int threadNum;
 	private String baseDir;
 	private String[] excludedPaths;
@@ -17,7 +10,7 @@ public class ScanConfiguration {
 	private String fileSizeUnit;
 	private String dirSizeUnit;
 	private long fileTopCount;
-	
+
 	public ScanConfiguration(int threadNum, String baseDir, String[] excludedPaths, String[] outputTypes,
 			String fileOutputLoc, String fileSizeUnit, String dirSizeUnit, long fileTopCount) {
 		super();

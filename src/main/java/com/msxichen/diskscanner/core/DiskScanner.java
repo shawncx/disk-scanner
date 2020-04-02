@@ -1,20 +1,21 @@
 package com.msxichen.diskscanner.core;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.msxichen.diskscanner.core.model.ScanContext;
 
 public class DiskScanner extends AbsDiskScanner {
-	
-	private long endTime;
 
 	private static final Logger LOGGER = LogManager.getLogger();
 
 	@Override
 	public void scan(ScanContext context) {
 		LOGGER.trace("Start scan");
-		initialize(context);
+		onInitialize(context);
+		onLaunchScan(context);
 
 		int emptyQueueCount = 0;
 		while (true) {
@@ -26,23 +27,16 @@ public class DiskScanner extends AbsDiskScanner {
 			}
 			if (emptyQueueCount == EMPTY_QUEUE_WAIT_COUNT) {
 				LOGGER.trace("Candidate queue keeps empty. Finish!");
-				consumerPool.shutdownNow();
-				
-				endTime = System.currentTimeMillis();
+				onFinish();
 				break;
 			}
 
 			try {
-				Thread.sleep(QUEUE_POLLING_INTERVAL_MILLISECOND);
+				TimeUnit.MILLISECONDS.sleep(QUEUE_POLLING_INTERVAL_MILLISECOND);
 			} catch (InterruptedException e) {
 				LOGGER.error(e);
 			}
 		}
-	}
-	
-	@Override
-	protected long getEndTime() {
-		return endTime;
 	}
 
 }

@@ -1,6 +1,8 @@
 package com.msxichen.diskscanner.core;
 
 import java.io.File;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -36,7 +38,8 @@ public abstract class AbsDiskScanner {
 	protected ExecutorService consumerPool;
 	protected BlockingQueue<FileSnap> candidates;
 
-	protected long startTime;
+	protected Instant startInstant;
+	protected Instant endInstant;
 
 	protected long fileQueueSize = DEFAULT_FILE_QUEUE_SIZE;
 
@@ -44,21 +47,19 @@ public abstract class AbsDiskScanner {
 	protected static final int EMPTY_QUEUE_WAIT_COUNT = 3;
 	protected static final long QUEUE_POLLING_INTERVAL_MILLISECOND = 1000;
 
+	private ScanResult result;
+
 	private static final ScanResultDirectoryNodeReverseComparator SCAN_RES_DIR_NODE_REV_COMP = new ScanResultDirectoryNodeReverseComparator();
 
 	public abstract void scan(ScanContext context);
 
-	protected abstract long getEndTime();
-
 	public ScanResult getScanResult() {
-		ScanResult result = new ScanResult();
-		result.setSummaryInfo(buildSummaryInfo());
-		result.setFileInfo(buildFileInfo());
-		result.setDirectoryInfo(buildDirectoryInfo());
 		return result;
 	}
 
-	protected void initialize(ScanContext context) {
+	protected void onInitialize(ScanContext context) {
+		result = null;
+
 		consumerPool = Executors.newFixedThreadPool(context.getThreadNum());
 
 		fileQueue = new PriorityBlockingQueue<FileSnap>(100, new FileSnapSizeComparator());
@@ -67,7 +68,7 @@ public abstract class AbsDiskScanner {
 		fileCount = new AtomicLong();
 		dirCount = new AtomicLong();
 
-		startTime = context.getStartTime().getTime();
+		startInstant = context.getStartInstant();
 
 		dirTree = new DirectoryTree(context.getBaseDir());
 		fileQueueSize = context.getFileTopCount() <= 0 ? DEFAULT_FILE_QUEUE_SIZE : context.getFileTopCount();
@@ -79,13 +80,26 @@ public abstract class AbsDiskScanner {
 			Pattern p = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
 			excludedPatterns[i] = p;
 		}
+	}
 
+	protected void onLaunchScan(ScanContext context) {
+		startInstant = Instant.now();
 		File baseDir = new File(context.getBaseDir());
 		candidates.offer(new FileSnap(baseDir));
 		for (int i = 0; i < context.getThreadNum(); i++) {
 			consumerPool.submit(new FileProcessor(candidates, fileQueue, dirTree, fileCount, dirCount, excludedPatterns,
 					fileQueueSize));
 		}
+	}
+
+	protected void onFinish() {
+		consumerPool.shutdownNow();
+		endInstant = Instant.now();
+
+		result = new ScanResult();
+		result.setSummaryInfo(buildSummaryInfo());
+		result.setFileInfo(buildFileInfo());
+		result.setDirectoryInfo(buildDirectoryInfo());
 	}
 
 	private ScanResultSummaryInfo buildSummaryInfo() {
@@ -95,7 +109,8 @@ public abstract class AbsDiskScanner {
 		info.setExcludedPaths(excludedPaths);
 		info.setFileCount(fileCount.get());
 		info.setSizeInByte(dirTree.getRoot().getSizeInByte());
-		info.setTimeCostInSecond((getEndTime() - startTime) / 1000);
+		info.setTimeCostInSecond(Duration.between(startInstant, endInstant).toSeconds());
+		info.setEndInstant(endInstant);
 		return info;
 	}
 

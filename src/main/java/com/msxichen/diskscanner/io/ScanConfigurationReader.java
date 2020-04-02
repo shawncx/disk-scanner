@@ -48,7 +48,6 @@ public class ScanConfigurationReader {
 	public ScanContext buildScanContext(ScanConfiguration config) throws IllegalArgumentException {
 		LOGGER.trace("Start to build context from configuraiton");
 		ScanContext context = new ScanContext();
-		context.setStartTime(new Date());
 
 		if (config.getThreadNum() <= 0) {
 			throw new IllegalArgumentException("Thread number cannot less than 1");
@@ -88,14 +87,12 @@ public class ScanConfigurationReader {
 			}
 			context.setFileOutputLoc(Paths.get(config.getFileOutputLoc()));
 
-			String summaryPath = FILE_OUTPUT_NAME_SUMMARY + "-"
-					+ FILE_OUTPUT_TIME_FORMAT.format(context.getStartTime());
+			Date date = new Date();
+			String summaryPath = FILE_OUTPUT_NAME_SUMMARY + "-" + FILE_OUTPUT_TIME_FORMAT.format(date);
 			context.setSummaryOutputPath(context.getFileOutputLoc().resolve(summaryPath));
-			String dirInfoPath = FILE_OUTPUT_NAME_DIR_INFO + "-"
-					+ FILE_OUTPUT_TIME_FORMAT.format(context.getStartTime());
+			String dirInfoPath = FILE_OUTPUT_NAME_DIR_INFO + "-" + FILE_OUTPUT_TIME_FORMAT.format(date);
 			context.setDirInfoOutputPath(context.getFileOutputLoc().resolve(dirInfoPath));
-			String fileInfoPath = FILE_OUTPUT_NAME_FILE_INFO + "-"
-					+ FILE_OUTPUT_TIME_FORMAT.format(context.getStartTime());
+			String fileInfoPath = FILE_OUTPUT_NAME_FILE_INFO + "-" + FILE_OUTPUT_TIME_FORMAT.format(date);
 			context.setFileInfoOutputPath(context.getFileOutputLoc().resolve(fileInfoPath));
 		}
 
