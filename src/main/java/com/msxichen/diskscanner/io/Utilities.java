@@ -17,7 +17,7 @@ public class Utilities {
 		} else {
 			throw new IllegalArgumentException("Unknow unit: " + unit);
 		}
-		return formatSize(size);
+		return formatSize(size) + unit;
 	}
 
 	public static String formatSize(double size) {

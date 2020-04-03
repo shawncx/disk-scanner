@@ -10,12 +10,12 @@ import java.util.List;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.msxichen.diskscanner.core.model.FileSnap;
 import com.msxichen.diskscanner.core.model.OutputType;
 import com.msxichen.diskscanner.core.model.ScanContext;
 import com.msxichen.diskscanner.core.model.ScanResult;
 import com.msxichen.diskscanner.core.model.ScanResultDirectoryInfo;
 import com.msxichen.diskscanner.core.model.ScanResultDirectoryNode;
+import com.msxichen.diskscanner.core.model.ScanResultFile;
 import com.msxichen.diskscanner.core.model.ScanResultFileInfo;
 import com.msxichen.diskscanner.core.model.ScanResultSummaryInfo;
 
@@ -54,12 +54,11 @@ public class ScanResultLocalWriter implements AutoCloseable {
 		writeLine(summaryWriter, "File count: " + info.getFileCount());
 		writeLine(summaryWriter, "Directory count: " + info.getDirCount());
 		writeLine(summaryWriter, "Root directory: " + info.getBaseDir());
-		writeLine(summaryWriter, "Size: " + Utilities.formatSize(context.getDirOutputUnit(), info.getSizeInByte())
-				+ context.getDirOutputUnit());
+		writeLine(summaryWriter, "Size: " + Utilities.formatSize(context.getDirOutputUnit(), info.getSizeInByte()));
 	}
 
 	public void writeDirectoryInfo(ScanResultDirectoryInfo info) {
-		ScanResultDirectoryTreeVisitor visitor = new ScanResultDirectoryTreeVisitor(consoleOutput, dirInfoWriter, context.getDirOutputUnit());
+		ScanResultDirectoryTreeVisitor visitor = new ScanResultDirectoryTreeVisitor(consoleOutput, dirInfoWriter);
 		LinkedList<ScanResultDirectoryNode> queue = new LinkedList<>();
 		queue.offer(info.getRoot());
 		int size = 1;
@@ -83,11 +82,10 @@ public class ScanResultLocalWriter implements AutoCloseable {
 	public void writeFileInfo(ScanResultFileInfo info) {
 		writeLine(fileInfoWriter, "Top size File: ");
 		writeLine(fileInfoWriter, "*********************************************************");
-		for (FileSnap file : info.getFiles()) {
+		for (ScanResultFile file : info.getFiles()) {
 			StringBuilder msg = new StringBuilder();
 			msg.append("Path: ").append(file.getAbsolutePath()).append("\r\n");
-			msg.append("Size: ").append(Utilities.formatSize(context.getFileOutputUnit(), file.getSizeInByte()))
-					.append(context.getFileOutputUnit());
+			msg.append("Size: ").append(file.getSize());
 			writeLine(fileInfoWriter, msg.toString());
 		}
 	}

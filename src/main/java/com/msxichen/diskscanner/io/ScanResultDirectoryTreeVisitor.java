@@ -3,19 +3,16 @@ package com.msxichen.diskscanner.io;
 import java.io.BufferedWriter;
 import java.io.IOException;
 
-import com.msxichen.diskscanner.core.model.OutputUnit;
 import com.msxichen.diskscanner.core.model.ScanResultDirectoryNode;
 
 public class ScanResultDirectoryTreeVisitor {
 
 	private boolean consoleOutput;
 	private BufferedWriter fileWriter;
-	private OutputUnit outputUnit;
 
-	public ScanResultDirectoryTreeVisitor(boolean consoleOutput, BufferedWriter fileWriter, OutputUnit outputUnit) {
+	public ScanResultDirectoryTreeVisitor(boolean consoleOutput, BufferedWriter fileWriter) {
 		this.consoleOutput = consoleOutput;
 		this.fileWriter = fileWriter;
-		this.outputUnit = outputUnit;
 	}
 
 	public void visitDepth(int depth) {
@@ -47,10 +44,9 @@ public class ScanResultDirectoryTreeVisitor {
 	}
 
 	private String formatNode(ScanResultDirectoryNode node) {
-		String size = Utilities.formatSize(outputUnit, node.getSizeInByte());
 		StringBuilder sb = new StringBuilder();
 		sb.append("Path: ").append(node.getAbsolutePath()).append("\r\n");
-		sb.append("Size: ").append(size).append(outputUnit).append("\r\n");
+		sb.append("Size: ").append(node.getSize()).append("\r\n");
 		return sb.toString();
 	}
 

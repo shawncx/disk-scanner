@@ -18,10 +18,12 @@ import java.util.regex.Pattern;
 import com.msxichen.diskscanner.core.model.DirectoryNode;
 import com.msxichen.diskscanner.core.model.DirectoryTree;
 import com.msxichen.diskscanner.core.model.FileSnap;
+import com.msxichen.diskscanner.core.model.OutputUnit;
 import com.msxichen.diskscanner.core.model.ScanContext;
 import com.msxichen.diskscanner.core.model.ScanResult;
 import com.msxichen.diskscanner.core.model.ScanResultDirectoryInfo;
 import com.msxichen.diskscanner.core.model.ScanResultDirectoryNode;
+import com.msxichen.diskscanner.core.model.ScanResultFile;
 import com.msxichen.diskscanner.core.model.ScanResultFileInfo;
 import com.msxichen.diskscanner.core.model.ScanResultSummaryInfo;
 import com.msxichen.diskscanner.io.Utilities;
@@ -40,6 +42,9 @@ public abstract class AbsDiskScanner {
 
 	protected Instant startInstant;
 	protected Instant endInstant;
+	
+	protected OutputUnit dirUnit;
+	protected OutputUnit fileUnit;
 
 	protected long fileQueueSize = DEFAULT_FILE_QUEUE_SIZE;
 
@@ -69,8 +74,11 @@ public abstract class AbsDiskScanner {
 		dirCount = new AtomicLong();
 
 		startInstant = context.getStartInstant();
+		
+		dirUnit = context.getDirOutputUnit();
+		fileUnit = context.getFileOutputUnit();
 
-		dirTree = new DirectoryTree(context.getBaseDir());
+		dirTree = new DirectoryTree(context.getBaseDir(), true);
 		fileQueueSize = context.getFileTopCount() <= 0 ? DEFAULT_FILE_QUEUE_SIZE : context.getFileTopCount();
 
 		excludedPaths = context.getExcludedPaths();
@@ -122,7 +130,13 @@ public abstract class AbsDiskScanner {
 
 		Collections.reverse(list);
 		ScanResultFileInfo info = new ScanResultFileInfo();
-		info.setFiles(list);
+		for (FileSnap snap : list) {
+			ScanResultFile file = new ScanResultFile();
+			file.setAbsolutePath(snap.getAbsolutePath());
+			file.setSize(Utilities.formatSize(fileUnit, snap.getSizeInByte()));
+			file.setSizeInByte(snap.getSizeInByte());
+			info.getFiles().add(file);
+		}
 		return info;
 	}
 
@@ -130,6 +144,8 @@ public abstract class AbsDiskScanner {
 		ScanResultDirectoryNode resRoot = new ScanResultDirectoryNode();
 		resRoot.setAbsolutePath(dirTree.getRoot().getAbsolutePath());
 		resRoot.setSizeInByte(dirTree.getRoot().getSizeInByte());
+		resRoot.setSize(Utilities.formatSize(dirUnit, dirTree.getRoot().getSizeInByte()));
+		resRoot.setDirectory(dirTree.getRoot().isDirectory());
 		buildScanResultDirectoryTree(resRoot, dirTree.getRoot());
 
 		ScanResultDirectoryInfo info = new ScanResultDirectoryInfo();
@@ -147,6 +163,8 @@ public abstract class AbsDiskScanner {
 			ScanResultDirectoryNode resChild = new ScanResultDirectoryNode();
 			resChild.setAbsolutePath(dirChild.getAbsolutePath());
 			resChild.setSizeInByte(dirChild.getSizeInByte());
+			resChild.setSize(Utilities.formatSize(dirUnit, dirChild.getSizeInByte()));
+			resChild.setDirectory(dirChild.isDirectory());
 			resChildren.add(resChild);
 		}
 		Collections.sort(resChildren, SCAN_RES_DIR_NODE_REV_COMP);

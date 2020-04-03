@@ -1,0 +1,57 @@
+button[nbTreeGridRowToggle] {
+  background: transparent;
+  border: none;
+  padding: 0;
+}
+
+.search-input {
+  margin-left: 1rem;
+  margin-bottom: 1rem;
+}
+
+.nb-column-name {
+  width: 100%;
+}
+
+.dir-name-sub-title {
+  margin-left: 1rem;
+  font-size: 0.8rem;
+  font-style: italic;
+  color: gray;
+}
+
+.file-size {
+  float: right;
+  margin-right: 5rem;
+}
+
+.dir-icon {
+  width: 1rem;
+  height: 1rem;
+}
+
+@media screen and (min-width: 400px) {
+  .nb-column-name,
+  .nb-column-size {
+    width: 50%;
+  }
+}
+
+@media screen and (min-width: 500px) {
+  .nb-column-name,
+  .nb-column-size,
+  .nb-column-kind {
+    width: 33.333%;
+  }
+}
+
+@media screen and (min-width: 600px) {
+  .nb-column-name {
+    width: 31%;
+  }
+  .nb-column-size,
+  .nb-column-kind,
+  .nb-column-items {
+    width: 23%;
+  }
+}

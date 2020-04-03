@@ -44,17 +44,5 @@ public class FileSnap {
 	public long getSizeInByte() {
 		return sizeInByte;
 	}
-	
-	public double getSizeKiloByte() {
-		return sizeInByte / 1024d;
-	}
-
-	public double getSizeMegaByte() {
-		return sizeInByte / 1024d / 1024d;
-	}
-
-	public double getSizeInGigaByte() {
-		return sizeInByte / 1024d / 1024d / 1024d;
-	}
 
 }

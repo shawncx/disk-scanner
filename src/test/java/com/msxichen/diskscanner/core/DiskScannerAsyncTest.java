@@ -3,11 +3,14 @@ package com.msxichen.diskscanner.core;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.time.Duration;
 import java.time.Instant;
 
 import org.junit.Test;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.msxichen.diskscanner.core.model.ScanConfiguration;
 import com.msxichen.diskscanner.core.model.ScanContext;
 import com.msxichen.diskscanner.core.model.ScanProgress;
@@ -44,8 +47,19 @@ public class DiskScannerAsyncTest {
 		assertTrue(progress.isDone());
 
 		ScanResult result = scanner.getScanResult();
-		try (ScanResultLocalWriter writer = new ScanResultLocalWriter(context)) {
-			writer.writeResult(result);
+		ObjectMapper om = new ObjectMapper();
+		String summaryStr = om.writeValueAsString(result.getSummaryInfo());
+		String fileStr = om.writeValueAsString(result.getFileInfo());
+		String dirStr = om.writeValueAsString(result.getDirectoryInfo());
+		
+//		try (BufferedWriter writer = new BufferedWriter(new FileWriter("summary-info-sample.json"))) {
+//			writer.write(summaryStr);
+//		}
+		try (BufferedWriter writer = new BufferedWriter(new FileWriter("file-info-sample.json"))) {
+			writer.write(fileStr);	
+		}
+		try (BufferedWriter writer = new BufferedWriter(new FileWriter("dir-info-sample.json"))) {
+			writer.write(dirStr);
 		}
 	}
 }

@@ -5,17 +5,17 @@ import java.util.List;
 
 public class ScanResultFileInfo {
 
-	private List<FileSnap> files = new ArrayList<FileSnap>();
+	private List<ScanResultFile> files = new ArrayList<ScanResultFile>();
 
 	public ScanResultFileInfo() {
 		super();
 	}
 
-	public List<FileSnap> getFiles() {
+	public List<ScanResultFile> getFiles() {
 		return files;
 	}
 
-	public void setFiles(List<FileSnap> files) {
+	public void setFiles(List<ScanResultFile> files) {
 		this.files = files;
 	}
 

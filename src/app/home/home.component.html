@@ -6,8 +6,94 @@
 </ng-template>
 
 <nb-card>
-  <nb-card-header>Hello World</nb-card-header>
+  <nb-card-header>Scan Configuration</nb-card-header>
   <nb-card-body>
     <button nbButton (click)="openDialog(dialog)">Open Dialog</button>
   </nb-card-body>
 </nb-card>
+
+<nb-accordion>
+  <nb-accordion-item>
+    <nb-accordion-item-header>
+      Summary
+    </nb-accordion-item-header>
+    <nb-accordion-item-body>
+      A nebula is an interstellar cloud of dust, hydrogen, helium and other
+      ionized gases. Originally, nebula was a name for any diffuse astronomical
+      object, including galaxies beyond the Milky Way.
+    </nb-accordion-item-body>
+  </nb-accordion-item>
+</nb-accordion>
+
+<nb-accordion>
+  <nb-accordion-item>
+    <nb-accordion-item-header>
+      Directory Tree
+    </nb-accordion-item-header>
+    <nb-accordion-item-body>
+      <label class="search-label" for="search">Search:</label>
+      <input
+        nbInput
+        [nbFilterInput]="dirTree"
+        id="search"
+        class="search-input"
+      />
+
+      <table [nbTreeGrid]="dirTree">
+        <tr nbTreeGridHeaderRow *nbTreeGridHeaderRowDef="allColumns"></tr>
+        <tr nbTreeGridRow *nbTreeGridRowDef="let row; columns: allColumns"></tr>
+
+        <ng-container [nbTreeGridColumnDef]="customColumn">
+          <th nbTreeGridHeaderCell *nbTreeGridHeaderCellDef>
+            {{ customColumn }}
+          </th>
+          <td nbTreeGridCell *nbTreeGridCellDef="let row">
+            <div>
+              <nb-tree-grid-row-toggle
+                [expanded]="row.expanded"
+                *ngIf="row.data.isDir; else fileIcon"
+              >
+              </nb-tree-grid-row-toggle>
+              <ng-template #fileIcon>
+                <nb-icon class="dir-icon" icon="file-text-outline"></nb-icon>
+              </ng-template>
+              <span>{{ row.data[customColumn] }}</span>
+            </div>
+            <span class="dir-name-sub-title">{{ row.data.absolutePath }}</span>
+          </td>
+        </ng-container>
+
+        <ng-container
+          *ngFor="let column of defaultColumns; let index = index"
+          [nbTreeGridColumnDef]="column"
+          [showOn]="getShowOn(index)"
+        >
+          <th nbTreeGridHeaderCell *nbTreeGridHeaderCellDef>
+            {{ column }}
+          </th>
+          <td nbTreeGridCell *nbTreeGridCellDef="let row">
+            {{ row.data[column] || '-' }}
+          </td>
+        </ng-container>
+      </table>
+    </nb-accordion-item-body>
+  </nb-accordion-item>
+</nb-accordion>
+
+<nb-accordion>
+  <nb-accordion-item>
+    <nb-accordion-item-header>
+      Top Files
+    </nb-accordion-item-header>
+    <nb-accordion-item-body>
+      <nb-list>
+        <nb-list-item *ngFor="let file of files">
+          <div>
+            <span>{{file.absolutePath}}</span>
+            <span class="file-size">{{file.size}}</span>
+          </div>
+        </nb-list-item>
+      </nb-list>
+    </nb-accordion-item-body>
+  </nb-accordion-item>
+</nb-accordion>

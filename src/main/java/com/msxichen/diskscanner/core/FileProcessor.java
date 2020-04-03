@@ -77,6 +77,10 @@ public class FileProcessor implements Runnable {
 				candidates.offer(new FileSnap(file));
 			}
 		}
+		if (subFiles == null || subFiles.length == 0) {
+			// Add empty file into dir tree, or it will never appear
+			dirTree.increaseSizeDescade(dir.getAbsolutePath(), 0, true);
+		}
 	}
 
 	private void processFile(FileSnap file) {
@@ -84,7 +88,7 @@ public class FileProcessor implements Runnable {
 		if (fileQueue.size() > fileQueueSize) {
 			fileQueue.poll();
 		}
-		dirTree.increaseSizeDescade(file.getAbsolutePath(), file.getSizeInByte());
+		dirTree.increaseSizeDescade(file.getAbsolutePath(), file.getSizeInByte(), false);
 
 	}
 }
