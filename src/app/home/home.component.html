@@ -22,21 +22,25 @@
           />
         </td>
       </tr>
-      <tr>
-        <td class="config-label-column">
-          <button nbButton (click)="openDialog(dialog)">Open Dialog</button>
-        </td>
-        <td>
-          <nb-progress-bar
-            *ngIf="scanProgress.length > 0"
-            [value]="scanProgressValue"
-            status="info"
-            >{{ scanProgress }}</nb-progress-bar
-          >
-        </td>
-      </tr>
     </table>
   </nb-card-body>
+  <nb-card-footer>
+      <table class="config-table">
+        <tr>
+          <td class="config-label-column">
+            <button nbButton (click)="openDialog(dialog)">Open Dialog</button>
+          </td>
+          <td>
+            <nb-progress-bar
+              *ngIf="scanProgress.length > 0"
+              [value]="scanProgressValue"
+              status="info"
+              >{{ scanProgress }}</nb-progress-bar
+            >
+          </td>
+        </tr>
+      </table>
+  </nb-card-footer>
 </nb-card>
 
 <nb-accordion>
