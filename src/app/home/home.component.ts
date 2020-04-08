@@ -9,12 +9,14 @@ import {
   NbTreeGridDataSource,
   NbTreeGridDataSourceBuilder,
 } from '@nebular/theme';
+import { ScanService } from '../services/scan.service';
 import {
-  DirectoryInfoService,
+  ScanResultService,
+  SummaryInfo,
+  FileItem,
   DirectoryTreeNode,
   DirectoryTreeEntry,
-} from '../services/directory-info.service';
-import { FileInfoService, FileItem } from '../services/file-info.service';
+} from '../services/scan-result.service';
 
 @Component({
   selector: 'app-home',
@@ -27,17 +29,20 @@ export class HomeComponent implements OnInit {
   public defaultColumns = ['size', 'items'];
   public allColumns = [this.customColumn, ...this.defaultColumns];
 
+  public summaryInfo: SummaryInfo;
   public dirTree: NbTreeGridDataSource<DirectoryTreeNode<DirectoryTreeEntry>>;
-
   public files: FileItem[];
+
+  public scanProgressValue: number = 0;
+  public scanProgress = '';
 
   constructor(
     private dialogService: NbDialogService,
     private dataSourceBuilder: NbTreeGridDataSourceBuilder<
       DirectoryTreeNode<DirectoryTreeEntry>
     >,
-    private dirInfoService: DirectoryInfoService,
-    private fileInfoService: FileInfoService
+    private scanService: ScanService,
+    private scanResultService: ScanResultService
   ) {}
 
   public getShowOn(index: number) {
@@ -46,11 +51,24 @@ export class HomeComponent implements OnInit {
     return minWithForMultipleColumns + nextColumnStep * index;
   }
 
+  public onBaseDirectoryChanged(files: any): void {
+    alert(files[0].path);
+  }
+
   ngOnInit() {
-    this.dirInfoService.getDirectoryTree().then((root) => {
+    this.scanService.getProgress().then((progress) => {
+      const processedNum = progress.fileProcessed + progress.dirProcessed;
+      const totalNum = processedNum + progress.candidateInQueue;
+      this.scanProgressValue = (processedNum / totalNum) * 100;
+      this.scanProgress = processedNum + '/' + totalNum;
+    });
+    this.scanResultService.getSummary().then((summary) => {
+      this.summaryInfo = summary;
+    });
+    this.scanResultService.getDirectoryTree().then((root) => {
       this.dirTree = this.dataSourceBuilder.create([root]);
     });
-    this.fileInfoService.getFiles().then((files) => this.files = files);
+    this.scanResultService.getFiles().then((files) => (this.files = files));
   }
 
   openDialog(dialog: TemplateRef<any>) {

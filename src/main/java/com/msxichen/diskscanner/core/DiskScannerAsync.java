@@ -1,5 +1,7 @@
 package com.msxichen.diskscanner.core;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.logging.log4j.LogManager;
@@ -10,7 +12,7 @@ import com.msxichen.diskscanner.core.model.ScanProgress;
 
 public class DiskScannerAsync extends AbsDiskScanner {
 
-	private ScanProgress progress;
+	private Boolean isDone = false;
 
 	private static final Logger LOGGER = LogManager.getLogger();
 
@@ -20,40 +22,41 @@ public class DiskScannerAsync extends AbsDiskScanner {
 		onInitialize(context);
 		onLaunchScan(context);
 
-		new Thread(new ScanMonitor(progress)).start();
+		new Thread(new ScanMonitor()).start();
 	}
 
 	@Override
 	protected void onInitialize(ScanContext context) {
 		super.onInitialize(context);
-		progress = new ScanProgress();
+		isDone = false;
 	}
 
 	@Override
 	protected void onFinish() {
 		super.onFinish();
-		progress.setDone(true);
+		isDone = true;
 	}
 
 	public ScanProgress getProgress() {
+		ScanProgress progress = new ScanProgress();
+		progress.setDone(isDone);
+		progress.setCandidateInQueue(candidates.size());
+		progress.setDirProcessed(dirCount.longValue());
+		progress.setFileProcessed(fileCount.longValue());
+		progress.setTimeCostInSecond(Duration.between(startInstant, Instant.now()).getSeconds());
 		return progress;
 	}
 
 	private class ScanMonitor implements Runnable {
-
-		private ScanProgress progress;
-
-		public ScanMonitor(ScanProgress progress) {
-			super();
-			this.progress = progress;
-		}
 
 		@Override
 		public void run() {
 			int emptyQueueCount = 0;
 			while (true) {
 				LOGGER.trace("Candidate queue size: " + candidates.size());
-				progress.setCandidateInQueue(candidates.size());
+				
+
+				
 				if (candidates.size() == 0) {
 					emptyQueueCount++;
 				} else {

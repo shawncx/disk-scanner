@@ -1,15 +1,9 @@
 {
-    "timeCostInSecond": 2,
-    "fileCount": 40,
-    "dirCount": 14,
-    "sizeInByte": 745124,
-    "baseDir": "C:\\Users\\xichen\\tool\\apache-maven-3.6.3",
-    "excludedPaths": [
-        "C:\\Users\\xichen\\tool\\apache-maven-3.6.3\\boot",
-        "*.jar"
-    ],
-    "endInstant": {
-        "nano": 437142000,
-        "epochSecond": 1585884976
-    }
+    "timeCostInSecond":3,
+    "fileCount":40,
+    "dirCount":14,
+    "sizeInByte":745124,
+    "size":"0.71Mb",
+    "baseDir":"C:\\Users\\xichen\\tool\\apache-maven-3.6.3",
+    "excludedPaths":["C:\\Users\\xichen\\tool\\apache-maven-3.6.3\\boot", "*.jar"]
 }

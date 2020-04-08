@@ -17,6 +17,7 @@ import com.msxichen.diskscanner.core.model.ScanProgress;
 import com.msxichen.diskscanner.core.model.ScanResult;
 import com.msxichen.diskscanner.io.ScanConfigurationReader;
 import com.msxichen.diskscanner.io.ScanResultLocalWriter;
+import com.msxichen.diskscanner.web.entity.GetScanProgressResponse;
 
 public class DiskScannerAsyncTest {
 
@@ -36,6 +37,13 @@ public class DiskScannerAsyncTest {
 
 		ScanProgress progress = scanner.getProgress();
 		assertFalse(progress.isDone());
+		
+		ObjectMapper om = new ObjectMapper();
+		GetScanProgressResponse progressRes = new GetScanProgressResponse(progress);
+		String progressStr = om.writeValueAsString(progressRes);
+		try (BufferedWriter writer = new BufferedWriter(new FileWriter("progress-sample.json"))) {
+			writer.write(progressStr);
+		}
 
 		Instant st = Instant.now();
 		while (Duration.between(st, Instant.now()).toSeconds() < 60) {
@@ -47,14 +55,15 @@ public class DiskScannerAsyncTest {
 		assertTrue(progress.isDone());
 
 		ScanResult result = scanner.getScanResult();
-		ObjectMapper om = new ObjectMapper();
+		
 		String summaryStr = om.writeValueAsString(result.getSummaryInfo());
 		String fileStr = om.writeValueAsString(result.getFileInfo());
 		String dirStr = om.writeValueAsString(result.getDirectoryInfo());
 		
-//		try (BufferedWriter writer = new BufferedWriter(new FileWriter("summary-info-sample.json"))) {
-//			writer.write(summaryStr);
-//		}
+		
+		try (BufferedWriter writer = new BufferedWriter(new FileWriter("summary-info-sample.json"))) {
+			writer.write(summaryStr);
+		}
 		try (BufferedWriter writer = new BufferedWriter(new FileWriter("file-info-sample.json"))) {
 			writer.write(fileStr);	
 		}

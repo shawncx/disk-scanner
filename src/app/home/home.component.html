@@ -8,7 +8,34 @@
 <nb-card>
   <nb-card-header>Scan Configuration</nb-card-header>
   <nb-card-body>
-    <button nbButton (click)="openDialog(dialog)">Open Dialog</button>
+    <table class="config-table">
+      <tr>
+        <td class="config-label-column">
+          <label for="baseDirInput" class="label">Bse directory path</label>
+        </td>
+        <td>
+          <input
+            type="file"
+            id="baseDir"
+            webkitdirectory
+            (change)="onBaseDirectoryChanged($event.target.files)"
+          />
+        </td>
+      </tr>
+      <tr>
+        <td class="config-label-column">
+          <button nbButton (click)="openDialog(dialog)">Open Dialog</button>
+        </td>
+        <td>
+          <nb-progress-bar
+            *ngIf="scanProgress.length > 0"
+            [value]="scanProgressValue"
+            status="info"
+            >{{ scanProgress }}</nb-progress-bar
+          >
+        </td>
+      </tr>
+    </table>
   </nb-card-body>
 </nb-card>
 
@@ -18,9 +45,48 @@
       Summary
     </nb-accordion-item-header>
     <nb-accordion-item-body>
-      A nebula is an interstellar cloud of dust, hydrogen, helium and other
-      ionized gases. Originally, nebula was a name for any diffuse astronomical
-      object, including galaxies beyond the Milky Way.
+      <table *ngIf="summaryInfo" class="summary-table">
+        <tr>
+          <td class="summary-label-column">
+            <label for="summary-info-timecost" class="label"
+              >Time cost(second):
+            </label>
+          </td>
+          <td>
+            <span id="summary-info-timecost">{{
+              summaryInfo.timeCostInSecond
+            }}</span>
+          </td>
+        </tr>
+        <tr>
+          <td class="summary-label-column">
+            <label for="summary-info-filecount" class="label"
+              >File number:
+            </label>
+          </td>
+          <td>
+            <span id="summary-info-filecount">{{ summaryInfo.fileCount }}</span>
+          </td>
+        </tr>
+        <tr>
+          <td class="summary-label-column">
+            <label for="summary-info-dircount" class="label"
+              >Directory number:
+            </label>
+          </td>
+          <td>
+            <span id="summary-info-dircount">{{ summaryInfo.dirCount }}</span>
+          </td>
+        </tr>
+        <tr>
+          <td class="summary-label-column">
+            <label for="summary-info-size" class="label">Size: </label>
+          </td>
+          <td>
+            <span id="summary-info-size">{{ summaryInfo.size }}</span>
+          </td>
+        </tr>
+      </table>
     </nb-accordion-item-body>
   </nb-accordion-item>
 </nb-accordion>
@@ -89,8 +155,8 @@
       <nb-list>
         <nb-list-item *ngFor="let file of files">
           <div>
-            <span>{{file.absolutePath}}</span>
-            <span class="file-size">{{file.size}}</span>
+            <span>{{ file.absolutePath }}</span>
+            <span class="file-size">{{ file.size }}</span>
           </div>
         </nb-list-item>
       </nb-list>

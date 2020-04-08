@@ -9,6 +9,7 @@ import {
   NbInputModule,
   NbAccordionModule,
   NbListModule,
+  NbProgressBarModule,
 } from '@nebular/theme';
 
 import { HomeRoutingModule } from './home-routing.module';
@@ -27,6 +28,7 @@ import { HomeComponent } from './home.component';
     NbTreeGridModule,
     NbAccordionModule,
     NbListModule,
+    NbProgressBarModule
   ],
 })
 export class HomeModule {}

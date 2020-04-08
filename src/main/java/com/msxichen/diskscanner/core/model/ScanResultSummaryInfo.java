@@ -1,16 +1,14 @@
 package com.msxichen.diskscanner.core.model;
 
-import java.time.Instant;
-
 public class ScanResultSummaryInfo {
 
 	private long timeCostInSecond;
 	private long fileCount;
 	private long dirCount;
 	private long sizeInByte;
+	private String size;
 	private String baseDir;
 	private String[] excludedPaths;
-	private Instant endInstant;
 
 	public ScanResultSummaryInfo() {
 		super();
@@ -64,12 +62,12 @@ public class ScanResultSummaryInfo {
 		this.excludedPaths = excludedPaths;
 	}
 
-	public Instant getEndInstant() {
-		return endInstant;
+	public String getSize() {
+		return size;
 	}
 
-	public void setEndInstant(Instant endInstant) {
-		this.endInstant = endInstant;
+	public void setSize(String size) {
+		this.size = size;
 	}
 
 }

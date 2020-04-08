@@ -31,11 +31,6 @@ public class ScannerController {
 
 	private static final Logger LOGGER = LogManager.getLogger();
 
-	@GetMapping("reeting")
-	public String greeting(@RequestParam(value = "name", defaultValue = "World") String name) {
-		return "Hello " + name;
-	}
-
 	@PostMapping("start")
 	public ResponseEntity<StartScanResponse> scan(@RequestBody ScanConfiguration config) {
 		ScanConfigurationReader reader = new ScanConfigurationReader();

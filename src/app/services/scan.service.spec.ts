@@ -1,12 +1,12 @@
 import { TestBed } from '@angular/core/testing';
 
-import { DirectoryInfoService } from './directory-info.service';
+import { ScanService } from './scan.service';
 
-describe('DirectoryInfoService', () => {
+describe('ScanService', () => {
   beforeEach(() => TestBed.configureTestingModule({}));
 
   it('should be created', () => {
-    const service: DirectoryInfoService = TestBed.get(DirectoryInfoService);
+    const service: ScanService = TestBed.get(ScanService);
     expect(service).toBeTruthy();
   });
 });
