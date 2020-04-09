@@ -11,14 +11,15 @@
     <table class="config-table">
       <tr>
         <td class="config-label-column">
-          <label for="baseDirInput" class="label">Bse directory path</label>
+          <label for="baseDirInput" class="label">Base directory path</label>
         </td>
         <td>
           <input
             type="file"
             id="baseDir"
             webkitdirectory
-            (change)="onBaseDirectoryChanged($event.target.files)"
+            directory
+            (change)="onBaseDirectoryChanged($event)"
           />
         </td>
       </tr>

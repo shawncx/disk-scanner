@@ -18,6 +18,9 @@ import {
   DirectoryTreeEntry,
 } from '../services/scan-result.service';
 
+import { IpcRenderer } from 'electron';
+
+
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
@@ -36,6 +39,8 @@ export class HomeComponent implements OnInit {
   public scanProgressValue: number = 0;
   public scanProgress = '';
 
+  private electronIpc: IpcRenderer;
+
   constructor(
     private dialogService: NbDialogService,
     private dataSourceBuilder: NbTreeGridDataSourceBuilder<
@@ -43,7 +48,17 @@ export class HomeComponent implements OnInit {
     >,
     private scanService: ScanService,
     private scanResultService: ScanResultService
-  ) {}
+  ) {
+    if ((<any>window).require) {
+      try {
+        this.electronIpc = (<any>window).require('electron').ipcRenderer;
+      } catch (e) {
+        alert(e);
+      }
+    } else {
+      alert('App not running inside Electron!');
+    }
+  }
 
   public getShowOn(index: number) {
     const minWithForMultipleColumns = 400;
@@ -51,8 +66,8 @@ export class HomeComponent implements OnInit {
     return minWithForMultipleColumns + nextColumnStep * index;
   }
 
-  public onBaseDirectoryChanged(files: any): void {
-    alert(files[0].path);
+  public onBaseDirectoryChanged(evt: any): void {
+    console.log(evt);
   }
 
   ngOnInit() {
@@ -71,7 +86,10 @@ export class HomeComponent implements OnInit {
     this.scanResultService.getFiles().then((files) => (this.files = files));
   }
 
-  openDialog(dialog: TemplateRef<any>) {
-    this.dialogService.open(dialog);
+  openDialog() {
+    // this.electronIpc.send("openDirectoryWindow");
+    const { BrowserWindow } = require('electron').remote
+    let win = new BrowserWindow({ width: 800, height: 600 })
+win.loadURL('https://github.com')
   }
 }
