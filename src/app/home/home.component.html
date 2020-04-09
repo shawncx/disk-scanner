@@ -11,25 +11,30 @@
     <table class="config-table">
       <tr>
         <td class="config-label-column">
-          <label for="baseDirInput" class="label">Base directory path</label>
+          <label class="label">Base directory</label>
+        </td>
+        <td>
+          <button nbButton size="small" (click)="openDirectoryWindow(dialog)">Select</button>
+          <span class="base-directory-span">{{baseDirectory}}</span>
+        </td>
+      </tr>
+      <!-- <tr>
+        <td class="config-label-column">
+          <label class="label">Test output</label>
         </td>
         <td>
           <input
-            type="file"
-            id="baseDir"
-            webkitdirectory
-            directory
-            (change)="onBaseDirectoryChanged($event)"
+            type="text" [value]="testoutput"
           />
         </td>
-      </tr>
+      </tr> -->
     </table>
   </nb-card-body>
   <nb-card-footer>
       <table class="config-table">
         <tr>
           <td class="config-label-column">
-            <button nbButton (click)="openDialog(dialog)">Open Dialog</button>
+            <button nbButton outline (click)="openDialog(dialog)">Start</button>
           </td>
           <td>
             <nb-progress-bar

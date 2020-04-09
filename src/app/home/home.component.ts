@@ -1,11 +1,10 @@
 import {
   Component,
   OnInit,
-  TemplateRef,
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
 } from '@angular/core';
 import {
-  NbDialogService,
   NbTreeGridDataSource,
   NbTreeGridDataSourceBuilder,
 } from '@nebular/theme';
@@ -17,9 +16,7 @@ import {
   DirectoryTreeNode,
   DirectoryTreeEntry,
 } from '../services/scan-result.service';
-
-import { IpcRenderer } from 'electron';
-
+import { ElectronIpcService, ElectronIpcChannel } from '../services/electron-ipc.service';
 
 @Component({
   selector: 'app-home',
@@ -28,6 +25,8 @@ import { IpcRenderer } from 'electron';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HomeComponent implements OnInit {
+  public baseDirectory = 'C:\\Users\\xichen\\Documents\\Visual Studio 2012\\Templates\\ProjectTemplates';
+
   public customColumn = 'name';
   public defaultColumns = ['size', 'items'];
   public allColumns = [this.customColumn, ...this.defaultColumns];
@@ -36,28 +35,25 @@ export class HomeComponent implements OnInit {
   public dirTree: NbTreeGridDataSource<DirectoryTreeNode<DirectoryTreeEntry>>;
   public files: FileItem[];
 
-  public scanProgressValue: number = 0;
+  public scanProgressValue = 0;
   public scanProgress = '';
 
-  private electronIpc: IpcRenderer;
-
   constructor(
-    private dialogService: NbDialogService,
+    private cd: ChangeDetectorRef,
+    private electronIpcService: ElectronIpcService,
     private dataSourceBuilder: NbTreeGridDataSourceBuilder<
       DirectoryTreeNode<DirectoryTreeEntry>
     >,
     private scanService: ScanService,
     private scanResultService: ScanResultService
   ) {
-    if ((<any>window).require) {
-      try {
-        this.electronIpc = (<any>window).require('electron').ipcRenderer;
-      } catch (e) {
-        alert(e);
+    electronIpcService.on(
+      ElectronIpcChannel.CloseDirecotryDialog,
+      (event, args) => {
+        this.baseDirectory = args;
+        this.cd.detectChanges();
       }
-    } else {
-      alert('App not running inside Electron!');
-    }
+    );
   }
 
   public getShowOn(index: number) {
@@ -86,10 +82,7 @@ export class HomeComponent implements OnInit {
     this.scanResultService.getFiles().then((files) => (this.files = files));
   }
 
-  openDialog() {
-    // this.electronIpc.send("openDirectoryWindow");
-    const { BrowserWindow } = require('electron').remote
-    let win = new BrowserWindow({ width: 800, height: 600 })
-win.loadURL('https://github.com')
+  public openDirectoryWindow() {
+    this.electronIpcService.send(ElectronIpcChannel.OpenDirecotryDialog);
   }
 }

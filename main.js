@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, remote } = require('electron');
+const { app, BrowserWindow, ipcMain, dialog } = require('electron');
 const url = require('url');
 const path = require('path');
 
@@ -38,39 +38,10 @@ app.on('activate', function () {
   if (mainWindow === null) createWindow();
 });
 
-function openModal() {
-  const { BrowserWindow } = require('electron');
-  let modal = new BrowserWindow({
-    parent: mainWindow,
-    modal: true,
-    show: false,
+ipcMain.on('OpenDirecotryDialog', async (event, arg) => {
+  const result = await dialog.showOpenDialog({
+    properties: ['openDirectory'],
   });
-  modal.loadURL('https://www.sitepoint.com');
-  modal.once('ready-to-show', () => {
-    modal.show();
-  });
-}
-
-ipcMain.on('openModal', (event, arg) => {
-  openModal();
+  mainWindow.webContents.send('CloseDirecotryDialog', result.filePaths);
 });
 
-function openDirecotryWindow() {
-  const { dialog } = require('electron').remote;
-  dialog.showOpenDialog(
-    {
-      properties: ['openDirectory'],
-    },
-    (selectedDir) => {
-      if (!selectedDir) {
-        console.log('no directory is selected!');
-      } else {
-        console.log('selected ' + selectedDir);
-      }
-    }
-  );
-}
-
-ipcMain.on('openDirectoryWindow', (event, arg) => {
-  openDirecotryWindow();
-});
