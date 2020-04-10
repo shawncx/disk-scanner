@@ -33,21 +33,30 @@ export interface DirectoryTreeEntry {
   providedIn: 'root',
 })
 export class ScanResultService {
+  private static readonly GetSummaryInfoUrl =
+    'http://localhost:8080/scanner/summary-info?uuid=';
+  private static readonly GetDirectoryInfoUrl =
+    'http://localhost:8080/scanner/directory-info?uuid=';
+  private static readonly GetFileInfoUrl =
+    'http://localhost:8080/scanner/file-info?uuid=';
+
   constructor(private client: HttpClient) {}
 
-  public async getSummary(): Promise<SummaryInfo> {
+  public async getSummaryInfo(uuid: string): Promise<SummaryInfo> {
     return this.client
-      .get<Model.GetSummaryInfoResponse>('./assets/summary-info-sample.json')
+      .get<Model.GetSummaryInfoResponse>(
+        ScanResultService.GetSummaryInfoUrl + uuid
+      )
       .toPromise()
       .then(
         (resp) =>
           <SummaryInfo>{
-            timeCostInSecond: resp.timeCostInSecond,
-            fileCount: resp.fileCount,
-            dirCount: resp.dirCount,
-            size: resp.size,
-            baseDir: resp.baseDir,
-            excludedPaths: resp.excludedPaths,
+            timeCostInSecond: resp.info.timeCostInSecond,
+            fileCount: resp.info.fileCount,
+            dirCount: resp.info.dirCount,
+            size: resp.info.size,
+            baseDir: resp.info.baseDir,
+            excludedPaths: resp.info.excludedPaths,
           }
       )
       .catch((e) => {
@@ -55,12 +64,12 @@ export class ScanResultService {
       });
   }
 
-  public async getFiles(): Promise<FileItem[]> {
+  public async getFileInfo(uuid: string): Promise<FileItem[]> {
     return this.client
-      .get<Model.GetFileInfoResponse>('./assets/file-info-sample.json')
+      .get<Model.GetFileInfoResponse>(ScanResultService.GetFileInfoUrl + uuid)
       .toPromise()
       .then((resp) =>
-        resp.files.map(
+        resp.info.files.map(
           (model) =>
             <FileItem>{
               absolutePath: model.absolutePath,
@@ -73,25 +82,27 @@ export class ScanResultService {
       });
   }
 
-  public async getDirectoryTree(): Promise<
-    DirectoryTreeNode<DirectoryTreeEntry>
-  > {
+  public async getDirectoryInfo(
+    uuid: string
+  ): Promise<DirectoryTreeNode<DirectoryTreeEntry>> {
     return this.client
-      .get<Model.GetDirectoryInfoResponse>('./assets/dir-info-sample.json')
+      .get<Model.GetDirectoryInfoResponse>(
+        ScanResultService.GetDirectoryInfoUrl + uuid
+      )
       .toPromise()
       .then((resp) => {
         const entityRoot: DirectoryTreeNode<DirectoryTreeEntry> = {
           data: {
-            name: resp.root.absolutePath,
+            name: resp.info.root.absolutePath,
             absolutePath: '',
-            size: resp.root.size,
-            isDir: resp.root.directory,
-            items: resp.root.children.length,
+            size: resp.info.root.size,
+            isDir: resp.info.root.directory,
+            items: resp.info.root.children.length,
           },
           children: [],
           expanded: true,
         };
-        this.convertToDirectoryTree(entityRoot, resp.root);
+        this.convertToDirectoryTree(entityRoot, resp.info.root);
         return entityRoot;
       })
       .catch((e) => {

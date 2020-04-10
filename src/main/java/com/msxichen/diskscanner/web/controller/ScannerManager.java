@@ -33,7 +33,7 @@ public enum ScannerManager {
 	}
 
 	public DiskScannerAsync getScanner(String uuid) {
-		return map.contains(uuid) ? map.get(uuid).t2: null;
+		return map.containsKey(uuid) ? map.get(uuid).t2: null;
 	}
 
 	private static class Cleaner implements Runnable {
@@ -56,7 +56,7 @@ public enum ScannerManager {
 					}
 					if (Duration.between(pair.t1, Instant.now())
 							.toMinutes() > CLEANER_EXEC_INTERVAL_IN_MIN) {
-						LOGGER.info("Scanner " + key + " is done over 30 mins, remove from cache");
+						LOGGER.info("Scanner " + key + " is done over 5 mins, remove from cache");
 						map.remove(key);
 					}
 				}

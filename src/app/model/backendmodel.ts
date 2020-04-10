@@ -1,5 +1,5 @@
 declare module Model {
-  export interface ScanStartRequest {
+  export interface StartScanRequest {
     threadNum: number;
     baseDir: string;
     excludedPaths: string[];
@@ -7,7 +7,13 @@ declare module Model {
     fileOutputLoc: string;
     fileSizeUnit: string;
     dirSizeUnit: string;
-    fileTopCount: string;
+    fileTopCount: number;
+  }
+
+  export interface StartScanResponse {
+    uuid: string;
+    message: null;
+    succeeded: boolean;
   }
 
   export interface ScanProgress {
@@ -23,16 +29,24 @@ declare module Model {
   }
 
   export interface GetSummaryInfoResponse {
+    info: SummaryInfo;
+  }
+
+  export interface SummaryInfo {
     timeCostInSecond: number;
     fileCount: number;
     dirCount: number;
     sizeInByte: number;
     size: string;
     baseDir: string;
-    excludedPaths: string[]
+    excludedPaths: string[];
   }
 
   export interface GetDirectoryInfoResponse {
+    info: DirectoryInfo;
+  }
+
+  export interface DirectoryInfo {
     root: DirectoryTreeNode;
   }
 
@@ -45,6 +59,10 @@ declare module Model {
   }
 
   export interface GetFileInfoResponse {
+    info: FileInfo;
+  }
+
+  export interface FileInfo {
     files: FileItem[];
   }
 

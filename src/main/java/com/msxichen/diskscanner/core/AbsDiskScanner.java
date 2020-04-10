@@ -50,7 +50,7 @@ public abstract class AbsDiskScanner {
 
 	protected static final long DEFAULT_FILE_QUEUE_SIZE = 1000;
 	protected static final int EMPTY_QUEUE_WAIT_COUNT = 3;
-	protected static final long QUEUE_POLLING_INTERVAL_MILLISECOND = 1000;
+	protected static final long QUEUE_POLLING_INTERVAL_MILLISECOND = 200;
 
 	private ScanResult result;
 

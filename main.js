@@ -1,13 +1,16 @@
-const { app, BrowserWindow, ipcMain, dialog } = require('electron');
+const { app, BrowserWindow, ipcMain, dialog, screen } = require('electron');
 const url = require('url');
 const path = require('path');
 
 let mainWindow;
 
 function createWindow() {
+  var size = screen.getPrimaryDisplay().workAreaSize;
   mainWindow = new BrowserWindow({
-    width: 1200,
-    height: 800,
+    x: 10,
+    y: 15,
+    width: size.width - 100,
+    height: size.height - 100,
     webPreferences: {
       nodeIntegration: true,
     },

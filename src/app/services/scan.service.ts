@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 export interface ScanProgress {
   dirProcessed: number;
@@ -10,27 +10,51 @@ export interface ScanProgress {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ScanService {
 
+  private static readonly StartScanUrl = 'http://localhost:8080/scanner/start';
+  private static readonly GetProgressUrl =
+    'http://localhost:8080/scanner/progress?uuid=';
+
   constructor(private client: HttpClient) {}
 
-  public async getProgress(): Promise<ScanProgress> {
+  public async startScan(baseDir: string): Promise<string> {
+    const body = JSON.stringify(this.buildStartScanRequest(baseDir));
+    const headers: HttpHeaders = new HttpHeaders({'Content-Type': 'application/json'});
     return this.client
-      .get<Model.GetScanProgressResponse>('./assets/progress-sample.json')
+      .post<Model.StartScanResponse>(ScanService.StartScanUrl, body, {headers})
       .toPromise()
-      .then((resp) =>
-        <ScanProgress> {
-          dirProcessed: resp.progress.dirProcessed,
-          fileProcessed: resp.progress.fileProcessed,
-          timeCostInSecond: resp.progress.timeCostInSecond,
-          candidateInQueue: resp.progress.candidateInQueue,
-          done: resp.progress.done
-        }
-      )
-      .catch((e) => {
-        return null;
-      });
+      .then((resp) => resp.uuid);
+  }
+
+  public async getProgress(uuid: string): Promise<ScanProgress> {
+    return this.client
+      .get<Model.GetScanProgressResponse>(ScanService.GetProgressUrl + uuid)
+      .toPromise()
+      .then(
+        (resp) =>
+          <ScanProgress>{
+            dirProcessed: resp.progress.dirProcessed,
+            fileProcessed: resp.progress.fileProcessed,
+            timeCostInSecond: resp.progress.timeCostInSecond,
+            candidateInQueue: resp.progress.candidateInQueue,
+            done: resp.progress.done,
+          }
+      );
+  }
+
+  private buildStartScanRequest(baseDir: string): Model.StartScanRequest {
+    return {
+      threadNum: 5, // TODO: magic number. Detect processor
+      baseDir,
+      excludedPaths: [],
+      outputTypes: ['Api'],
+      fileOutputLoc: '',
+      fileSizeUnit: 'Kb',
+      dirSizeUnit: 'Mb',
+      fileTopCount: 1000,
+    };
   }
 }
