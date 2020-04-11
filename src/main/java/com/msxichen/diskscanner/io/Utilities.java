@@ -8,7 +8,23 @@ public class Utilities {
 
 	public static String formatSize(OutputUnit unit, long sizeInByte) {
 		double size = 0;
-		if (OutputUnit.Gb == unit) {
+		if (OutputUnit.Auto == unit) {
+			size = sizeInByte;
+			if (size < 1024) {
+				return formatSize(size) + OutputUnit.B;
+			}
+			size /= 1024d;
+			if (size < 1024) {
+				return formatSize(size) + OutputUnit.Kb;
+			}
+			size /= 1024d;
+			if (size < 1024) {
+				return formatSize(size) + OutputUnit.Mb;
+			}
+			size /= 1024d;
+			return formatSize(size) + OutputUnit.Gb;
+			
+		} else if (OutputUnit.Gb == unit) {
 			size = sizeInByte / 1024d / 1024d / 1024d;
 		} else if (OutputUnit.Mb == unit) {
 			size = sizeInByte / 1024d / 1024d;

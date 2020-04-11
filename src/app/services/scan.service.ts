@@ -52,8 +52,8 @@ export class ScanService {
       excludedPaths: [],
       outputTypes: ['Api'],
       fileOutputLoc: '',
-      fileSizeUnit: 'Kb',
-      dirSizeUnit: 'Mb',
+      fileSizeUnit: 'Auto',
+      dirSizeUnit: 'Auto',
       fileTopCount: 1000,
     };
   }

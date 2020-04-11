@@ -100,7 +100,7 @@ export class ScanResultService {
             items: resp.info.root.children.length,
           },
           children: [],
-          expanded: true,
+          expanded: false,
         };
         this.convertToDirectoryTree(entityRoot, resp.info.root);
         return entityRoot;

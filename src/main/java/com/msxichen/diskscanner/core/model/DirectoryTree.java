@@ -30,7 +30,8 @@ public class DirectoryTree {
 		}
 		StringBuilder nextPath = path.append("\\").append(pathSegs[pathIndex]);
 
-		node.getChildern().putIfAbsent(nextPath.toString(), new DirectoryNode(nextPath.toString(), isDirectory));
+		node.getChildern().putIfAbsent(nextPath.toString(),
+				new DirectoryNode(nextPath.toString(), isDirectory || pathIndex < pathSegs.length - 1));
 		increaseSizeDescade(node.getChildern().get(nextPath.toString()), nextPath, pathSegs, pathIndex + 1, sizeInByte,
 				isDirectory);
 	}

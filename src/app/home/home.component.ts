@@ -42,8 +42,7 @@ export class HomeComponent implements OnInit {
 
   public isScanning = false;
 
-  public baseDirectory =
-    'C:\\Users\\xichen\\Documents\\Visual Studio 2012\\Templates\\ProjectTemplates';
+  public baseDirectory = '';
 
   public dirTreeCustomColumn = 'name';
   public dirTreeDefaultColumns = ['size', 'items'];
