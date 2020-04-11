@@ -1,7 +1,7 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-[![Disk Scanner][disk-scanner-screenshot]](./prod-pic.PNG)
+![Disk Scanner](./prod-pic.PNG)
 
 If you want to know size of each directory/file quickly, to figure out why your disk is full, this tool can help you.
 
