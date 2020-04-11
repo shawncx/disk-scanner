@@ -13,40 +13,18 @@ button[nbTreeGridRowToggle] {
   margin-left: 1rem;
 }
 
-.search-input {
-  margin-left: 1rem;
-  margin-bottom: 1rem;
-}
-
 .nb-column-name {
   width: 100%;
 }
 
-.dir-name-sub-title {
-  margin-left: 1rem;
-  font-size: 0.8rem;
-  font-style: italic;
-  color: gray;
-}
 
-.file-size {
-  float: right;
-  margin-right: 5rem;
-}
 
-.dir-icon {
-  width: 1rem;
-  height: 1rem;
-}
-
-.summary-table,
 .config-table {
   width: 100%;
 }
 
 @media screen and (min-width: 400px) {
-  .config-label-column,
-  .summary-label-column {
+  .config-label-column {
     width: 20%;
   }
 }

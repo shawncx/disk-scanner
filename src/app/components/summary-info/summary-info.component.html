@@ -1,0 +1,42 @@
+<table *ngIf="summaryInfo" class="summary-table">
+  <tr>
+    <td class="summary-label-column">
+      <label for="summary-info-timecost" class="label"
+        >Time cost(second):
+      </label>
+    </td>
+    <td>
+      <span id="summary-info-timecost">{{
+        summaryInfo.timeCostInSecond
+      }}</span>
+    </td>
+  </tr>
+  <tr>
+    <td class="summary-label-column">
+      <label for="summary-info-filecount" class="label"
+        >File number:
+      </label>
+    </td>
+    <td>
+      <span id="summary-info-filecount">{{ summaryInfo.fileCount }}</span>
+    </td>
+  </tr>
+  <tr>
+    <td class="summary-label-column">
+      <label for="summary-info-dircount" class="label"
+        >Directory number:
+      </label>
+    </td>
+    <td>
+      <span id="summary-info-dircount">{{ summaryInfo.dirCount }}</span>
+    </td>
+  </tr>
+  <tr>
+    <td class="summary-label-column">
+      <label for="summary-info-size" class="label">Size: </label>
+    </td>
+    <td>
+      <span id="summary-info-size">{{ summaryInfo.size }}</span>
+    </td>
+  </tr>
+</table>

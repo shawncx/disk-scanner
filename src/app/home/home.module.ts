@@ -14,9 +14,17 @@ import {
 
 import { HomeRoutingModule } from './home-routing.module';
 import { HomeComponent } from './home.component';
+import { DirectoryInfoComponent } from '../components/directory-info/directory-info.component';
+import { FileInfoComponent } from '../components/file-info/file-info.component';
+import { SummaryInfoComponent } from '../components/summary-info/summary-info.component';
 
 @NgModule({
-  declarations: [HomeComponent],
+  declarations: [
+    HomeComponent,
+    SummaryInfoComponent,
+    FileInfoComponent,
+    DirectoryInfoComponent,
+  ],
   imports: [
     CommonModule,
     NbCardModule,
@@ -28,7 +36,7 @@ import { HomeComponent } from './home.component';
     NbTreeGridModule,
     NbAccordionModule,
     NbListModule,
-    NbProgressBarModule
+    NbProgressBarModule,
   ],
 })
 export class HomeModule {}

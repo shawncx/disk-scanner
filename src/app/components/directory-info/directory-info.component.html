@@ -1,0 +1,48 @@
+<!-- <label class="search-label" for="search">Search:</label>
+      <input
+        nbInput
+        [nbFilterInput]="dirTree"
+        id="search"
+        class="search-input"
+      /> -->
+
+<table *ngIf="dirTree" [nbTreeGrid]="dirTree">
+  <tr nbTreeGridHeaderRow *nbTreeGridHeaderRowDef="dirTreeAllColumns"></tr>
+  <tr
+    nbTreeGridRow
+    *nbTreeGridRowDef="let row; columns: dirTreeAllColumns"
+  ></tr>
+
+  <ng-container [nbTreeGridColumnDef]="dirTreeCustomColumn">
+    <th nbTreeGridHeaderCell *nbTreeGridHeaderCellDef>
+      {{ dirTreeCustomColumn }}
+    </th>
+    <td nbTreeGridCell *nbTreeGridCellDef="let row">
+      <div>
+        <nb-tree-grid-row-toggle
+          [expanded]="row.expanded"
+          *ngIf="row.data.isDir; else fileIcon"
+        >
+        </nb-tree-grid-row-toggle>
+        <ng-template #fileIcon>
+          <nb-icon class="dir-icon" icon="file-text-outline"></nb-icon>
+        </ng-template>
+        <span>{{ row.data[dirTreeCustomColumn] }}</span>
+      </div>
+      <span class="dir-name-sub-title">{{ row.data.absolutePath }}</span>
+    </td>
+  </ng-container>
+
+  <ng-container
+    *ngFor="let column of dirTreeDefaultColumns; let index = index"
+    [nbTreeGridColumnDef]="column"
+    [showOn]="getDirTreeShowOn(index)"
+  >
+    <th nbTreeGridHeaderCell *nbTreeGridHeaderCellDef>
+      {{ column }}
+    </th>
+    <td nbTreeGridCell *nbTreeGridCellDef="let row">
+      {{ row.data[column] || '-' }}
+    </td>
+  </ng-container>
+</table>

@@ -1,0 +1,8 @@
+<nb-list *ngIf="files">
+  <nb-list-item *ngFor="let file of files">
+    <div>
+      <span>{{ file.absolutePath }}</span>
+      <span class="file-size">{{ file.size }}</span>
+    </div>
+  </nb-list-item>
+</nb-list>

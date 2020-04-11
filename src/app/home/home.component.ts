@@ -33,6 +33,7 @@ import { interval } from 'rxjs';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HomeComponent implements OnInit {
+  
   @ViewChild('summaryAccordion', { static: false })
   public summaryAccordion: NbAccordionItemComponent;
   @ViewChild('directoryAccordion', { static: false })
@@ -43,13 +44,6 @@ export class HomeComponent implements OnInit {
   public isScanning = false;
 
   public baseDirectory = '';
-
-  public dirTreeCustomColumn = 'name';
-  public dirTreeDefaultColumns = ['size', 'items'];
-  public dirTreeAllColumns = [
-    this.dirTreeCustomColumn,
-    ...this.dirTreeDefaultColumns,
-  ];
 
   public summaryInfo: SummaryInfo;
   public dirTree: NbTreeGridDataSource<DirectoryTreeNode<DirectoryTreeEntry>>;
@@ -111,12 +105,6 @@ export class HomeComponent implements OnInit {
         });
       })
       .catch((e) => this.onScanFailed(e, 'Start scann failed!'));
-  }
-
-  public getDirTreeShowOn(index: number) {
-    const minWithForMultipleColumns = 400;
-    const nextColumnStep = 100;
-    return minWithForMultipleColumns + nextColumnStep * index;
   }
 
   private onScanStart(): void {

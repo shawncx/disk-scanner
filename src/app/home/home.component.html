@@ -1,10 +1,3 @@
-<ng-template #dialog>
-  <nb-card>
-    <nb-card-header>Dialog</nb-card-header>
-    <nb-card-body>Hello world!</nb-card-body>
-  </nb-card>
-</ng-template>
-
 <nb-card>
   <nb-card-header>Scan Configuration</nb-card-header>
   <nb-card-body>
@@ -18,16 +11,6 @@
           <span class="base-directory-span">{{baseDirectory}}</span>
         </td>
       </tr>
-      <!-- <tr>
-        <td class="config-label-column">
-          <label class="label">Test output</label>
-        </td>
-        <td>
-          <input
-            type="text" [value]="testoutput"
-          />
-        </td>
-      </tr> -->
     </table>
   </nb-card-body>
   <nb-card-footer>
@@ -55,48 +38,7 @@
       Summary
     </nb-accordion-item-header>
     <nb-accordion-item-body>
-      <table *ngIf="summaryInfo" class="summary-table">
-        <tr>
-          <td class="summary-label-column">
-            <label for="summary-info-timecost" class="label"
-              >Time cost(second):
-            </label>
-          </td>
-          <td>
-            <span id="summary-info-timecost">{{
-              summaryInfo.timeCostInSecond
-            }}</span>
-          </td>
-        </tr>
-        <tr>
-          <td class="summary-label-column">
-            <label for="summary-info-filecount" class="label"
-              >File number:
-            </label>
-          </td>
-          <td>
-            <span id="summary-info-filecount">{{ summaryInfo.fileCount }}</span>
-          </td>
-        </tr>
-        <tr>
-          <td class="summary-label-column">
-            <label for="summary-info-dircount" class="label"
-              >Directory number:
-            </label>
-          </td>
-          <td>
-            <span id="summary-info-dircount">{{ summaryInfo.dirCount }}</span>
-          </td>
-        </tr>
-        <tr>
-          <td class="summary-label-column">
-            <label for="summary-info-size" class="label">Size: </label>
-          </td>
-          <td>
-            <span id="summary-info-size">{{ summaryInfo.size }}</span>
-          </td>
-        </tr>
-      </table>
+      <app-summary-info [summaryInfo]="summaryInfo" ></app-summary-info>
     </nb-accordion-item-body>
   </nb-accordion-item>
 
@@ -105,51 +47,7 @@
       Directory Tree
     </nb-accordion-item-header>
     <nb-accordion-item-body>
-      <!-- <label class="search-label" for="search">Search:</label>
-      <input
-        nbInput
-        [nbFilterInput]="dirTree"
-        id="search"
-        class="search-input"
-      /> -->
-
-      <table [nbTreeGrid]="dirTree">
-        <tr nbTreeGridHeaderRow *nbTreeGridHeaderRowDef="dirTreeAllColumns"></tr>
-        <tr nbTreeGridRow *nbTreeGridRowDef="let row; columns: dirTreeAllColumns"></tr>
-
-        <ng-container [nbTreeGridColumnDef]="dirTreeCustomColumn">
-          <th nbTreeGridHeaderCell *nbTreeGridHeaderCellDef>
-            {{ dirTreeCustomColumn }}
-          </th>
-          <td nbTreeGridCell *nbTreeGridCellDef="let row">
-            <div>
-              <nb-tree-grid-row-toggle
-                [expanded]="row.expanded"
-                *ngIf="row.data.isDir; else fileIcon"
-              >
-              </nb-tree-grid-row-toggle>
-              <ng-template #fileIcon>
-                <nb-icon class="dir-icon" icon="file-text-outline"></nb-icon>
-              </ng-template>
-              <span>{{ row.data[dirTreeCustomColumn] }}</span>
-            </div>
-            <span class="dir-name-sub-title">{{ row.data.absolutePath }}</span>
-          </td>
-        </ng-container>
-
-        <ng-container
-          *ngFor="let column of dirTreeDefaultColumns; let index = index"
-          [nbTreeGridColumnDef]="column"
-          [showOn]="getDirTreeShowOn(index)"
-        >
-          <th nbTreeGridHeaderCell *nbTreeGridHeaderCellDef>
-            {{ column }}
-          </th>
-          <td nbTreeGridCell *nbTreeGridCellDef="let row">
-            {{ row.data[column] || '-' }}
-          </td>
-        </ng-container>
-      </table>
+      <app-directory-info [dirTree]="dirTree" ></app-directory-info>
     </nb-accordion-item-body>
   </nb-accordion-item>
 
@@ -158,14 +56,7 @@
       Top Files
     </nb-accordion-item-header>
     <nb-accordion-item-body>
-      <nb-list>
-        <nb-list-item *ngFor="let file of files">
-          <div>
-            <span>{{ file.absolutePath }}</span>
-            <span class="file-size">{{ file.size }}</span>
-          </div>
-        </nb-list-item>
-      </nb-list>
+      <app-file-info [files]="files" ></app-file-info>
     </nb-accordion-item-body>
   </nb-accordion-item>
 </nb-accordion>
