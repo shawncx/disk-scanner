@@ -98,7 +98,7 @@ export class HomeComponent implements OnInit {
               this.updateProgress(progress);
               if (progress.done) {
                 this.fetchScanResult(uuid)
-                  .then(() => this.onScanSucceeded())
+                  .then(() => this.onScanSucceeded(uuid))
                   .catch((e) =>
                     this.onScanFailed(e, 'Fetch scan result failed!')
                   );
