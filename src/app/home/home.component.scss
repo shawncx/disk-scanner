@@ -1,3 +1,11 @@
+.colored-column-info {
+  background-color: red;
+}
+
+.colored-column-warning {
+  background-color: yellow;
+}
+
 button[nbTreeGridRowToggle] {
   background: transparent;
   border: none;
@@ -16,8 +24,6 @@ button[nbTreeGridRowToggle] {
 .nb-column-name {
   width: 100%;
 }
-
-
 
 .config-table {
   width: 100%;

@@ -5,7 +5,7 @@ public class DirectoryTree {
 	private DirectoryNode root;
 
 	public DirectoryTree(String basePath, boolean isDirectory) {
-		root = new DirectoryNode(basePath, isDirectory);
+		root = new DirectoryNode(basePath, isDirectory, null);
 	}
 
 	public void increaseSizeDescade(String path, long sizeInByte, boolean isDirectory) {
@@ -30,14 +30,26 @@ public class DirectoryTree {
 		}
 		StringBuilder nextPath = path.append("\\").append(pathSegs[pathIndex]);
 
-		node.getChildern().putIfAbsent(nextPath.toString(),
-				new DirectoryNode(nextPath.toString(), isDirectory || pathIndex < pathSegs.length - 1));
+		boolean isDir = isDirectory || pathIndex < pathSegs.length - 1;
+		String extension = isDir ? null : getExtension(pathSegs[pathSegs.length - 1]);
+		node.getChildern().putIfAbsent(nextPath.toString(), new DirectoryNode(nextPath.toString(), isDir, extension));
 		increaseSizeDescade(node.getChildern().get(nextPath.toString()), nextPath, pathSegs, pathIndex + 1, sizeInByte,
 				isDirectory);
 	}
 
 	public DirectoryNode getRoot() {
 		return root;
+	}
+
+	private String getExtension(String filename) {
+		if (filename == null) {
+			return null;
+		}
+		int index = filename.lastIndexOf(".");
+		if (index < 0) {
+			return "";
+		}
+		return filename.substring(index) + 1;
 	}
 
 }

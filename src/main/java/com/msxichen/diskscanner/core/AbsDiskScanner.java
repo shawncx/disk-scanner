@@ -144,6 +144,7 @@ public abstract class AbsDiskScanner {
 		ScanResultDirectoryNode resRoot = new ScanResultDirectoryNode();
 		resRoot.setAbsolutePath(dirTree.getRoot().getAbsolutePath());
 		resRoot.setSizeInByte(dirTree.getRoot().getSizeInByte());
+		resRoot.setExtersion(dirTree.getRoot().getExtension());
 		resRoot.setSize(Utilities.formatSize(dirUnit, dirTree.getRoot().getSizeInByte()));
 		resRoot.setDirectory(dirTree.getRoot().isDirectory());
 		buildScanResultDirectoryTree(resRoot, dirTree.getRoot());
@@ -165,6 +166,7 @@ public abstract class AbsDiskScanner {
 			resChild.setSizeInByte(dirChild.getSizeInByte());
 			resChild.setSize(Utilities.formatSize(dirUnit, dirChild.getSizeInByte()));
 			resChild.setDirectory(dirChild.isDirectory());
+			resChild.setExtersion(dirChild.getExtension());
 			resChildren.add(resChild);
 		}
 		Collections.sort(resChildren, SCAN_RES_DIR_NODE_REV_COMP);

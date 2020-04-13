@@ -9,6 +9,7 @@ public class ScanResultDirectoryNode {
 	private long sizeInByte;
 	private String size;
 	private boolean isDirectory;
+	private String extersion;
 	private List<ScanResultDirectoryNode> children = new ArrayList<ScanResultDirectoryNode>();
 
 	public String getAbsolutePath() {
@@ -41,6 +42,14 @@ public class ScanResultDirectoryNode {
 
 	public void setDirectory(boolean isDirectory) {
 		this.isDirectory = isDirectory;
+	}
+
+	public String getExtersion() {
+		return extersion;
+	}
+
+	public void setExtersion(String extersion) {
+		this.extersion = extersion;
 	}
 
 	public List<ScanResultDirectoryNode> getChildren() {

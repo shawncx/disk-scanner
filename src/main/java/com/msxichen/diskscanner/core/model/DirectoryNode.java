@@ -7,18 +7,21 @@ public class DirectoryNode {
 	private String absolutePath;
 	private long sizeInByte;
 	private boolean isDirectory;
+	private String extension;
 	private ConcurrentHashMap<String, DirectoryNode> children;
 
-	public DirectoryNode(String absolutePath, boolean isDirectory) {
+	public DirectoryNode(String absolutePath, boolean isDirectory, String extension) {
 		this.absolutePath = absolutePath;
 		this.isDirectory = isDirectory;
+		this.extension = extension;
 		this.children = new ConcurrentHashMap<String, DirectoryNode>();
 	}
 
-	public DirectoryNode(String absolutePath, long sizeInByte, boolean isDirectory) {
+	public DirectoryNode(String absolutePath, long sizeInByte, boolean isDirectory, String extension) {
 		this.absolutePath = absolutePath;
 		this.sizeInByte = sizeInByte;
 		this.isDirectory = isDirectory;
+		this.extension = extension;
 		this.children = new ConcurrentHashMap<String, DirectoryNode>();
 	}
 
@@ -42,16 +45,9 @@ public class DirectoryNode {
 		return sizeInByte;
 	}
 
-	public double getSizeKiloByte() {
-		return sizeInByte / 1024d;
+	public String getExtension() {
+		return extension;
 	}
 
-	public double getSizeMegaByte() {
-		return sizeInByte / 1024d / 1024d;
-	}
-
-	public double getSizeInGigaByte() {
-		return sizeInByte / 1024d / 1024d / 1024d;
-	}
 
 }

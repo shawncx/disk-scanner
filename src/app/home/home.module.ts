@@ -10,6 +10,7 @@ import {
   NbAccordionModule,
   NbListModule,
   NbProgressBarModule,
+  NbLayoutModule,
 } from '@nebular/theme';
 
 import { HomeRoutingModule } from './home-routing.module';
@@ -30,6 +31,7 @@ import { SummaryInfoComponent } from '../components/summary-info/summary-info.co
     NbCardModule,
     NbButtonModule,
     NbDialogModule.forRoot(),
+    NbLayoutModule,
     HomeRoutingModule,
     NbIconModule,
     NbInputModule,
