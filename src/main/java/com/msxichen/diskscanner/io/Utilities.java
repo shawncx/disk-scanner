@@ -4,7 +4,20 @@ import com.msxichen.diskscanner.core.model.OutputUnit;
 
 public class Utilities {
 
+	public static final String EMPTY_EXTENSION = "<empty>";
+
 	private static final String SIZE_FORMAT = "%.2f";
+
+	public static String getExtension(String filename) {
+		if (filename == null) {
+			return null;
+		}
+		int index = filename.lastIndexOf(".");
+		if (index < 0) {
+			return EMPTY_EXTENSION;
+		}
+		return filename.substring(index + 1).toLowerCase();
+	}
 
 	public static String formatSize(OutputUnit unit, long sizeInByte) {
 		double size = 0;
@@ -23,7 +36,7 @@ public class Utilities {
 			}
 			size /= 1024d;
 			return formatSize(size) + OutputUnit.Gb;
-			
+
 		} else if (OutputUnit.Gb == unit) {
 			size = sizeInByte / 1024d / 1024d / 1024d;
 		} else if (OutputUnit.Mb == unit) {

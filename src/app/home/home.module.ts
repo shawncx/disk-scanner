@@ -11,6 +11,7 @@ import {
   NbListModule,
   NbProgressBarModule,
   NbLayoutModule,
+  NbCheckboxModule,
 } from '@nebular/theme';
 
 import { HomeRoutingModule } from './home-routing.module';
@@ -39,6 +40,7 @@ import { SummaryInfoComponent } from '../components/summary-info/summary-info.co
     NbAccordionModule,
     NbListModule,
     NbProgressBarModule,
+    NbCheckboxModule
   ],
 })
 export class HomeModule {}
