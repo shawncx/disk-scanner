@@ -1,42 +1,104 @@
-<table *ngIf="info" class="summary-table">
-  <tr>
-    <td class="summary-label-column">
-      <label for="summary-info-timecost" class="label"
-        >Time cost(second):
-      </label>
-    </td>
-    <td>
-      <span id="summary-info-timecost">{{
-        info.timeCostInSecond
-      }}</span>
-    </td>
-  </tr>
-  <tr>
-    <td class="summary-label-column">
-      <label for="summary-info-filecount" class="label"
-        >File number:
-      </label>
-    </td>
-    <td>
-      <span id="summary-info-filecount">{{ info.fileCount }}</span>
-    </td>
-  </tr>
-  <tr>
-    <td class="summary-label-column">
-      <label for="summary-info-dircount" class="label"
-        >Directory number:
-      </label>
-    </td>
-    <td>
-      <span id="summary-info-dircount">{{ info.dirCount }}</span>
-    </td>
-  </tr>
-  <tr>
-    <td class="summary-label-column">
-      <label for="summary-info-size" class="label">Size: </label>
-    </td>
-    <td>
-      <span id="summary-info-size">{{ info.size }}</span>
-    </td>
-  </tr>
-</table>
+<nb-layout class="summary-layout">
+  <nb-layout-column>
+    <nb-card>
+      <nb-card-header>Overview</nb-card-header>
+      <nb-card-body>
+        <table *ngIf="info" class="overview-table">
+          <tr>
+            <td class="overview-label-column">
+              <label for="overview-info-timecost" class="overview-table-label"
+                >Time cost(second):
+              </label>
+            </td>
+            <td class="overview-value-column">
+              <span id="overview-info-timecost">{{
+                info.timeCostInSecond
+              }}</span>
+            </td>
+          </tr>
+          <tr>
+            <td class="overview-label-column">
+              <label for="overview-info-filecount" class="overview-table-label"
+                >File number:
+              </label>
+            </td>
+            <td class="overview-value-column">
+              <span id="overview-info-filecount">{{ info.fileCount }}</span>
+            </td>
+          </tr>
+          <tr>
+            <td class="overview-label-column">
+              <label for="overview-info-dircount" class="overview-table-label"
+                >Directory number:
+              </label>
+            </td>
+            <td class="overview-value-column">
+              <span id="overview-info-dircount">{{ info.dirCount }}</span>
+            </td>
+          </tr>
+          <tr>
+            <td class="overview-label-column">
+              <label for="overview-info-size" class="overview-table-label"
+                >Size:
+              </label>
+            </td>
+            <td class="overview-value-column">
+              <span id="overview-info-size">{{ info.size }}</span>
+            </td>
+          </tr>
+        </table>
+      </nb-card-body>
+    </nb-card>
+    <nb-card>
+      <nb-card-header>Top 10 files</nb-card-header>
+      <nb-card-body>
+        <nb-list *ngIf="topFiles">
+          <nb-list-item *ngFor="let file of topFiles">
+            <div>
+              <span>{{ file.absolutePath }}</span>
+              <span class="topFile-size">{{ file.size }}</span>
+            </div>
+          </nb-list-item>
+        </nb-list>
+      </nb-card-body>
+    </nb-card>
+  </nb-layout-column>
+
+  <nb-layout-column>
+    <nb-card>
+      <nb-card-header>File extension size distribution</nb-card-header>
+      <nb-card-body>
+        <div class="chart-wrapper">
+          <canvas
+            #extensionSizeChart
+            baseChart
+            [data]="pieChartData"
+            [labels]="pieChartLabels"
+            [chartType]="pieChartType"
+            [options]="pieChartOptions"
+            [plugins]="pieChartPlugins"
+            [legend]="pieChartLegend"
+          >
+          </canvas>
+        </div>
+      </nb-card-body>
+    </nb-card>
+    <nb-card>
+      <nb-card-header>File extension count distribution</nb-card-header>
+      <nb-card-body>
+        <div class="chart-wrapper">
+          <canvas
+            #extensionCountChart
+            baseChart
+            [data]="pieChartData"
+            [labels]="pieChartLabels"
+            [chartType]="pieChartType"
+            [options]="pieChartOptions"
+            [plugins]="pieChartPlugins"
+            [legend]="pieChartLegend"
+          >
+          </canvas>
+        </div>
+      </nb-card-body>
+    </nb-card> </nb-layout-column
+></nb-layout>

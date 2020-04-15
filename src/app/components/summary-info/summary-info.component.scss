@@ -1,14 +1,30 @@
 @media screen and (min-width: 400px) {
-  .summary-label-column {
-    width: 20%;
+  .overview-label-column {
+    width: 70%;
   }
 }
 
-.summary-table {
+.overview-table {
   width: 100%;
 }
 
-.label {
+.overview-table-label {
   font-size: 0.95rem;
   line-height: 2rem;
 }
+
+.summary-layout {
+  /deep/ .layout {
+    min-height: auto;
+  }
+}
+
+.overview-value-column {
+    float: right;
+    margin-right: 6rem;
+}
+
+.topFile-size {
+    float: right;
+    margin-right: 5rem;
+  }

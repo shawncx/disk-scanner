@@ -57,6 +57,8 @@ public abstract class AbsDiskScanner {
 	protected static final long DEFAULT_FILE_QUEUE_SIZE = 1000;
 	protected static final int EMPTY_QUEUE_WAIT_COUNT = 3;
 	protected static final long QUEUE_POLLING_INTERVAL_MILLISECOND = 200;
+	
+	private static final int SUMMARY_TOP_FILE_COUNT = 10;
 
 	private ScanResult result;
 
@@ -121,13 +123,28 @@ public abstract class AbsDiskScanner {
 				return b.getSizeInByte() - a.getSizeInByte() > 0 ? 1 : -1;
 			}
 		});
+		
+		List<FileSnap> topFiles = new ArrayList<>();
+		List<ScanResultFile> resTopFiles = new ArrayList<>();
+		while (!fileQueue.isEmpty()) {
+			topFiles.add(fileQueue.poll());
+		}
+		Collections.reverse(topFiles);
+		for (FileSnap snap : topFiles) {
+			ScanResultFile file = new ScanResultFile();
+			file.setAbsolutePath(snap.getAbsolutePath());
+			file.setSize(Utilities.formatSize(fileUnit, snap.getSizeInByte()));
+			file.setSizeInByte(snap.getSizeInByte());
+			resTopFiles.add(file);
+		}
+		
 		result = new ScanResult();
-		result.setSummaryInfo(buildSummaryInfo(resExtensionItems));
-		result.setFileInfo(buildFileInfo());
+		result.setSummaryInfo(buildSummaryInfo(resExtensionItems, resTopFiles));
+		result.setFileInfo(buildFileInfo(resTopFiles));
 		result.setDirectoryInfo(buildDirectoryInfo(resExtensionItems));
 	}
 
-	private ScanResultSummaryInfo buildSummaryInfo(List<ScanResultExtensionItem> resExtensionItems) {
+	private ScanResultSummaryInfo buildSummaryInfo(List<ScanResultExtensionItem> resExtensionItems, List<ScanResultFile> resTopFiles) {
 		ScanResultSummaryInfo info = new ScanResultSummaryInfo();
 		info.setBaseDir(dirTree.getRoot().getAbsolutePath());
 		info.setDirCount(dirCount.get());
@@ -137,24 +154,15 @@ public abstract class AbsDiskScanner {
 		info.setTimeCostInSecond(Duration.between(startInstant, endInstant).toSeconds());
 		info.setSize(Utilities.formatSize(dirUnit, dirTree.getRoot().getSizeInByte()));
 		info.setExtensionItems(resExtensionItems);
+		for (int i = 0; i < SUMMARY_TOP_FILE_COUNT && i < resTopFiles.size(); i++) {
+			info.getTopFiles().add(resTopFiles.get(i));
+		}
 		return info;
 	}
 
-	private ScanResultFileInfo buildFileInfo() {
-		List<FileSnap> list = new ArrayList<FileSnap>();
-		while (!fileQueue.isEmpty()) {
-			list.add(fileQueue.poll());
-		}
-
-		Collections.reverse(list);
+	private ScanResultFileInfo buildFileInfo(List<ScanResultFile> resTopFiles) {
 		ScanResultFileInfo info = new ScanResultFileInfo();
-		for (FileSnap snap : list) {
-			ScanResultFile file = new ScanResultFile();
-			file.setAbsolutePath(snap.getAbsolutePath());
-			file.setSize(Utilities.formatSize(fileUnit, snap.getSizeInByte()));
-			file.setSizeInByte(snap.getSizeInByte());
-			info.getFiles().add(file);
-		}
+		info.setFiles(resTopFiles);
 		return info;
 	}
 

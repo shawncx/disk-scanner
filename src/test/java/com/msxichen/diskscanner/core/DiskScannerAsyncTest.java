@@ -61,14 +61,14 @@ public class DiskScannerAsyncTest {
 		String dirStr = om.writeValueAsString(result.getDirectoryInfo());
 		
 		
-//		try (BufferedWriter writer = new BufferedWriter(new FileWriter("summary-info-sample.json"))) {
-//			writer.write(summaryStr);
-//		}
+		try (BufferedWriter writer = new BufferedWriter(new FileWriter("summary-info-sample.json"))) {
+			writer.write(summaryStr);
+		}
 //		try (BufferedWriter writer = new BufferedWriter(new FileWriter("file-info-sample.json"))) {
 //			writer.write(fileStr);	
 //		}
-		try (BufferedWriter writer = new BufferedWriter(new FileWriter("dir-info-sample.json"))) {
-			writer.write(dirStr);
-		}
+//		try (BufferedWriter writer = new BufferedWriter(new FileWriter("dir-info-sample.json"))) {
+//			writer.write(dirStr);
+//		}
 	}
 }

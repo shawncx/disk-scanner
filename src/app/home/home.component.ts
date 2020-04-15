@@ -5,14 +5,9 @@ import {
   ChangeDetectorRef,
   ViewChild,
 } from '@angular/core';
-import {
-  NbToastrService,
-  NbAccordionItemComponent,
-} from '@nebular/theme';
+import { NbToastrService, NbAccordionItemComponent } from '@nebular/theme';
 import { ScanService, ScanProgress } from '../services/scan.service';
-import {
-  ScanResultService
-} from '../services/scan-result.service';
+import { ScanResultService } from '../services/scan-result.service';
 import {
   ElectronIpcService,
   ElectronIpcChannel,
@@ -27,7 +22,6 @@ import { interval } from 'rxjs';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HomeComponent implements OnInit {
-
   @ViewChild('summaryAccordion', { static: false })
   public summaryAccordion: NbAccordionItemComponent;
   @ViewChild('directoryAccordion', { static: false })
@@ -168,8 +162,14 @@ export class HomeComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.scanResultService.getFakeDirectoryInfo().then((info) => {
-      this.directoryInfo = info;
+    Promise.all([
+      this.scanResultService.getFakeDirectoryInfo(),
+      this.scanResultService.getFakeSummaryInfo(),
+      this.scanResultService.getFakeFileInfo()
+    ]).then(([dirInfo, summaryInfo, fileInfo]) => {
+      this.directoryInfo = dirInfo;
+      this.summaryInfo = summaryInfo;
+      this.fileInfo = fileInfo;
       this.cd.detectChanges();
     });
   }

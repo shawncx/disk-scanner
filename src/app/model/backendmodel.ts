@@ -47,6 +47,7 @@ declare module Model {
     baseDir: string;
     excludedPaths: string[];
     extensionItems: ExtensionItem[];
+    topFiles: FileItem[];
   }
 
   export interface GetDirectoryInfoResponse {

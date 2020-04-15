@@ -1,4 +1,4 @@
-<nb-layout>
+<nb-layout class="dirTree-layout">
   <nb-layout-column class="dirTree-layout-column">
     <table *ngIf="dirTreeDataSource" [nbTreeGrid]="dirTreeDataSource">
       <tr nbTreeGridHeaderRow *nbTreeGridHeaderRowDef="dirTreeAllColumns"></tr>
@@ -48,6 +48,8 @@
     </table>
   </nb-layout-column>
   <nb-layout-column>
+    <nb-card>
+  <nb-card-body>
     <table *ngIf="extensionListItems" class="extension-table">
       <tr>
         <th>
@@ -84,15 +86,7 @@
         </td>
       </tr>
     </table>
-    <!-- <nb-list *ngIf="extensionListItems">
-      <nb-list-item *ngFor="let item of extensionListItems">
-        <nb-checkbox
-          [(checked)]="item.included"
-          status="primary"
-          (checkedChange)="toggleExtensionItem(item)"
-          >{{ item.extension }}</nb-checkbox
-        >
-      </nb-list-item>
-    </nb-list> -->
+    </nb-card-body>
+</nb-card>
   </nb-layout-column>
 </nb-layout>

@@ -57,4 +57,24 @@ export class ScanResultService {
         return null;
       });
   }
+
+  public async getFakeSummaryInfo(): Promise<Model.SummaryInfo> {
+    return this.client
+      .get<Model.GetSummaryInfoResponse>('./assets/summary-info-sample.json')
+      .toPromise()
+      .then((resp) => resp.info)
+      .catch((e) => {
+        return null;
+      });
+  }
+
+  public async getFakeFileInfo(): Promise<Model.FileInfo> {
+    return this.client
+      .get<Model.GetFileInfoResponse>('./assets/file-info-sample.json')
+      .toPromise()
+      .then((resp) => resp.info)
+      .catch((e) => {
+        return null;
+      });
+  }
 }

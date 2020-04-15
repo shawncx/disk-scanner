@@ -25,6 +25,12 @@
   width: 50%;
 }
 
+.dirTree-layout {
+  /deep/ .layout {
+    min-height: auto;
+  }
+}
+
 .dirTree-table-td {
   padding-top: 0.5rem;
   padding-bottom: 0.5rem;
