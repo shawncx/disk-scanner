@@ -12,11 +12,16 @@ public class Utilities {
 		if (filename == null) {
 			return null;
 		}
-		int index = filename.lastIndexOf(".");
+		int slashIndex = filename.lastIndexOf("\\");
+		String name = filename.substring(slashIndex < 0 ? 0 : slashIndex, filename.length());
+		if (name == null || name.length() == 0) {
+			return null;
+		}
+		int index = name.lastIndexOf(".");
 		if (index < 0) {
 			return EMPTY_EXTENSION;
 		}
-		return filename.substring(index + 1).toLowerCase();
+		return name.substring(index + 1).toLowerCase();
 	}
 
 	public static String formatSize(OutputUnit unit, long sizeInByte) {

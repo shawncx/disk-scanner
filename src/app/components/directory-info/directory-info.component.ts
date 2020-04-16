@@ -75,7 +75,7 @@ export class DirectoryInfoComponent implements OnInit {
           count: item.count,
           size: getFileSize(item.sizeInByte),
           percentage:
-            formatSize(item.sizeInByte / dirRoot.data.sizeInByte) + '%',
+            formatSize(item.sizeInByte / dirRoot.data.sizeInByte * 100) + '%',
           included: true,
         }
     );

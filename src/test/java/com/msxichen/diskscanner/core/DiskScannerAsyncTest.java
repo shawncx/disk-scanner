@@ -25,6 +25,13 @@ public class DiskScannerAsyncTest {
 	public void testScanExcludedDir() throws Exception {
 		runScan("src/test/resources/testScanExcludedDir.json");
 	}
+	
+	@Test
+	public void test() {
+		String path = "a\\b\\c";
+		
+		System.out.println(path.lastIndexOf("\\"));
+	}
 
 	private void runScan(String configPath) throws Exception {
 		ScanConfigurationReader reader = new ScanConfigurationReader();

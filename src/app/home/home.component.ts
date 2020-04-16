@@ -93,9 +93,9 @@ export class HomeComponent implements OnInit {
     this.scanProgressValue = 0;
     this.scanProgress = '0% (0/0)';
 
-    this.summaryAccordion.close();
-    this.directoryAccordion.close();
-    this.fileAccordion.close();
+    // this.summaryAccordion.close();
+    // this.directoryAccordion.close();
+    // this.fileAccordion.close();
 
     this.isScanning = true;
 
@@ -115,9 +115,9 @@ export class HomeComponent implements OnInit {
 
         this.scanProgressStatus = 'success';
 
-        this.summaryAccordion.open();
-        this.directoryAccordion.open();
-        this.fileAccordion.open();
+        // this.summaryAccordion.open();
+        // this.directoryAccordion.open();
+        // this.fileAccordion.open();
 
         this.isScanning = false;
       })

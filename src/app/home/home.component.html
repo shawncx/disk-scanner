@@ -46,7 +46,16 @@
   </nb-card-footer>
 </nb-card>
 
-<nb-accordion multi>
+<nb-tabset>
+  <nb-tab tabTitle="Summary">
+    <app-summary-info [summaryInfo]="summaryInfo"></app-summary-info>
+  </nb-tab>
+  <nb-tab tabTitle="Detail">
+    <app-directory-info [directoryInfo]="directoryInfo"></app-directory-info>
+  </nb-tab>
+</nb-tabset>
+
+<!-- <nb-accordion multi>
   <nb-accordion-item #summaryAccordion>
     <nb-accordion-item-header>
       Summary
@@ -73,4 +82,4 @@
       <app-file-info [fileInfo]="fileInfo"></app-file-info>
     </nb-accordion-item-body>
   </nb-accordion-item>
-</nb-accordion>
+</nb-accordion> -->

@@ -27,6 +27,13 @@ interface ExtensionItem {
   extension: string;
   sizeInByte: number;
   count: number;
+  color: string;
+}
+
+interface ChartItem {
+  name: string;
+  value: number;
+  color: string;
 }
 
 interface SummaryInfo {
@@ -92,14 +99,7 @@ export class SummaryInfoComponent implements OnInit {
       baseDir: info.baseDir,
       excludedPaths: info.excludedPaths,
     };
-    this.extensionItems = info.extensionItems.map(
-      (modelItem) =>
-        <ExtensionItem>{
-          extension: modelItem.extension,
-          sizeInByte: modelItem.sizeInByte,
-          count: modelItem.count,
-        }
-    );
+
     this.topFiles = info.topFiles.map(
       (modelItem) =>
         <FileItem>{
@@ -108,49 +108,28 @@ export class SummaryInfoComponent implements OnInit {
           size: getFileSize(modelItem.sizeInByte),
         }
     );
-
-    if (this.extensionSizeChartRef) {
-      console.log('a');
-      this.extensionSizeChart = new Chart(
-        this.extensionSizeChartRef.nativeElement,
-        {
-          type: 'pie',
-          data: {
-            labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-            datasets: [
-              {
-                label: '# of Votes',
-                data: [12, 19, 3, 5, 2, 3],
-                backgroundColor: SummaryInfoComponent.COLORS,
-                borderWidth: 1,
-              },
-            ],
-          },
-        }
-      );
+    if (this.extensionSizeChartRef && this.extensionCountChartRef) {
+      const [
+        topSizeExtensionItems,
+        topCountExtensionItems,
+      ] = this.prepareExtensionChartItems(info.extensionItems);
+      if (this.extensionSizeChart) {
+        this.updateChart(this.extensionSizeChart, topSizeExtensionItems);
+      } else {
+        this.extensionSizeChart = this.createChart(
+          this.extensionSizeChartRef.nativeElement,
+          topSizeExtensionItems
+        );
+      }
+      if (this.extensionCountChart) {
+        this.updateChart(this.extensionCountChart, topCountExtensionItems);
+      } else {
+        this.extensionCountChart = this.createChart(
+          this.extensionCountChartRef.nativeElement,
+          topCountExtensionItems
+        );
+      }
     }
-
-    if (this.extensionCountChartRef) {
-      console.log('a');
-      this.extensionCountChart = new Chart(
-        this.extensionCountChartRef.nativeElement,
-        {
-          type: 'pie',
-          data: {
-            labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-            datasets: [
-              {
-                label: '# of Votes',
-                data: [12, 19, 3, 5, 2, 3],
-                backgroundColor: SummaryInfoComponent.COLORS,
-                borderWidth: 1,
-              },
-            ],
-          },
-        }
-      );
-    }
-    // this._cd.detectChanges();
   }
 
   @ViewChild('extensionSizeChart', { static: false })
@@ -174,21 +153,81 @@ export class SummaryInfoComponent implements OnInit {
   private extensionSizeChart: Chart;
   private extensionCountChart: Chart;
 
-  constructor(private _cd: ChangeDetectorRef) {
-    monkeyPatchChartJsTooltip();
-    monkeyPatchChartJsLegend();
-  }
+  constructor() {}
 
   ngOnInit() {}
 
-  // private reloadExtensionChart(): void {
-  //   if (this.extensionChart && this.extensionChart.chart) {
-  //     this.extensionChart.chart.destroy();
-  //     this.extensionChart.chart = null;
+  private prepareExtensionChartItems(
+    modelItems: Model.ExtensionItem[]
+  ): ChartItem[][] {
+    const colorMap = new Map<string, string>();
+    let colorIndex = 0;
+    const topSizeExtensionItems = modelItems
+      .sort((a, b) => b.sizeInByte - a.sizeInByte)
+      .filter((modelItem, index) => index < 10)
+      .map((modelItem) => {
+        const color = colorMap.has(modelItem.extension)
+          ? colorMap.get(modelItem.extension)
+          : SummaryInfoComponent.COLORS[colorIndex++];
+        colorMap.set(modelItem.extension, color);
+        return <ChartItem>{
+          name: modelItem.extension,
+          value: modelItem.sizeInByte,
+          color,
+        };
+      });
 
-  //     this.extensionChart.data = this.pieChartData;
-  //     this.extensionChart.labels = this.pieChartLabels;
-  //     this.extensionChart.ngOnInit();
-  //   }
-  // }
+    const topCountExtensionItems = modelItems
+      .sort((a, b) => b.count - a.count)
+      .filter((modelItem, index) => index < 10)
+      .map((modelItem) => {
+        const color = colorMap.has(modelItem.extension)
+          ? colorMap.get(modelItem.extension)
+          : SummaryInfoComponent.COLORS[colorIndex++];
+        colorMap.set(modelItem.extension, color);
+        return <ChartItem>{
+          name: modelItem.extension,
+          value: modelItem.count,
+          color,
+        };
+      });
+    return [topSizeExtensionItems, topCountExtensionItems];
+  }
+
+  private createChart(element: any, chartItems: ChartItem[]): Chart {
+    return new Chart(element, {
+      type: 'pie',
+      data: {
+        labels: chartItems.map((item) => item.name),
+        datasets: [
+          {
+            data: chartItems.map((item) => item.value),
+            backgroundColor: chartItems.map((item) => item.color),
+            borderWidth: 1,
+          },
+        ],
+      },
+    });
+  }
+
+  private updateChart(chart: Chart, chartItems: ChartItem[]): void {
+    this.clearExistedChartData(chart);
+    chart.data.labels = chartItems.map((item) => item.name);
+    chart.data.datasets = [
+      {
+        data: chartItems.map((item) => item.value),
+        backgroundColor: chartItems.map((item) => item.color),
+        borderWidth: 1,
+      },
+    ];
+    chart.update();
+  }
+
+  private clearExistedChartData(chart: Chart): void {
+    chart.data.labels = [];
+    chart.data.datasets.forEach((dataset) => {
+      dataset.data = [];
+      dataset.backgroundColor = [];
+    });
+  }
 }

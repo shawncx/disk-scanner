@@ -12,6 +12,7 @@ import {
   NbProgressBarModule,
   NbLayoutModule,
   NbCheckboxModule,
+  NbTabsetModule,
 } from '@nebular/theme';
 
 import { HomeRoutingModule } from './home-routing.module';
@@ -35,6 +36,7 @@ import { ChartsModule } from 'ng2-charts';
     NbButtonModule,
     NbDialogModule.forRoot(),
     NbLayoutModule,
+    NbTabsetModule,
     HomeRoutingModule,
     NbIconModule,
     NbInputModule,
