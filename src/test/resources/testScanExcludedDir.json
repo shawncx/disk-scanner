@@ -1,6 +1,6 @@
 {
 	"threadNum": 5,
-	"baseDir": "C:\\Users\\xichen\\tool\\apache-maven-3.6.3",
+	"baseDir": "C:\\Users\\xichen\\Desktop\\SSIS\\migrate",
 	"excludedPaths": [
 		"C:\\Users\\xichen\\tool\\apache-maven-3.6.3\\boot",
 		"*.jar"

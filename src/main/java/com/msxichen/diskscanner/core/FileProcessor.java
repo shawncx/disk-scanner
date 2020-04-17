@@ -2,6 +2,7 @@ package com.msxichen.diskscanner.core;
 
 import java.io.File;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.PriorityBlockingQueue;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.regex.Pattern;
@@ -10,25 +11,28 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import com.msxichen.diskscanner.core.model.DirectoryTree;
+import com.msxichen.diskscanner.core.model.ExtensionItem;
 import com.msxichen.diskscanner.core.model.FileSnap;
 
 public class FileProcessor implements Runnable {
 
 	private PriorityBlockingQueue<FileSnap> fileQueue;
 	private DirectoryTree dirTree;
+	private ConcurrentHashMap<String, ExtensionItem> extensionMap;
 	private BlockingQueue<FileSnap> candidates;
 	private AtomicLong fileCount;
 	private AtomicLong dirCount;
 	private Pattern[] excludedPatterns;
 	private long fileQueueSize;
-	
+
 	private static final Logger LOGGER = LogManager.getLogger();
 
 	public FileProcessor(BlockingQueue<FileSnap> candidates, PriorityBlockingQueue<FileSnap> fileQueue,
-			DirectoryTree dirTree, AtomicLong fileCount, AtomicLong dirCount,
-			Pattern[] excludedPatterns, long fileQueueSize) {
+			DirectoryTree dirTree, ConcurrentHashMap<String, ExtensionItem> extensionMap, AtomicLong fileCount,
+			AtomicLong dirCount, Pattern[] excludedPatterns, long fileQueueSize) {
 		this.fileQueue = fileQueue;
 		this.dirTree = dirTree;
+		this.extensionMap = extensionMap;
 		this.candidates = candidates;
 		this.fileCount = fileCount;
 		this.dirCount = dirCount;
@@ -45,7 +49,7 @@ public class FileProcessor implements Runnable {
 				if (isExcluded(file)) {
 					continue;
 				}
-				
+
 				if (file.isDirectory()) {
 					dirCount.incrementAndGet();
 					processDirectory(file);
@@ -60,7 +64,7 @@ public class FileProcessor implements Runnable {
 			}
 		}
 	}
-	
+
 	private boolean isExcluded(FileSnap file) {
 		for (Pattern pattern : excludedPatterns) {
 			if (pattern.matcher(file.getAbsolutePath()).matches()) {
@@ -89,6 +93,12 @@ public class FileProcessor implements Runnable {
 			fileQueue.poll();
 		}
 		dirTree.increaseSizeDescade(file.getAbsolutePath(), file.getSizeInByte(), false);
-
+		
+		String extension = file.getExtension();
+		extensionMap.putIfAbsent(file.getExtension(), new ExtensionItem(extension));
+		ExtensionItem item = extensionMap.getOrDefault(file.getExtension(), new ExtensionItem(extension));
+		item.increaseCount(1);
+		item.increaseSizeInByte(file.getSizeInByte());
+		
 	}
 }

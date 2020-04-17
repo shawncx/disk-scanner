@@ -2,6 +2,8 @@ package com.msxichen.diskscanner.core.model;
 
 import java.io.File;
 
+import com.msxichen.diskscanner.io.Utilities;
+
 public class FileSnap {
 
 	private String absolutePath;
@@ -24,6 +26,13 @@ public class FileSnap {
 	public FileSnap(String absolutePath, long sizeInByte) {
 		this.absolutePath = absolutePath;
 		this.sizeInByte = sizeInByte;
+	}
+	
+	public String getExtension() {
+		if (isDirectory) {
+			return null;
+		}
+		return Utilities.getExtension(absolutePath);
 	}
 
 	public File[] listFiles() {

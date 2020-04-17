@@ -1,5 +1,8 @@
 package com.msxichen.diskscanner.core.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ScanResultSummaryInfo {
 
 	private long timeCostInSecond;
@@ -9,6 +12,9 @@ public class ScanResultSummaryInfo {
 	private String size;
 	private String baseDir;
 	private String[] excludedPaths;
+
+	private List<ScanResultExtensionItem> extensionItems = new ArrayList<>();
+	private List<ScanResultFile> topFiles = new ArrayList<>();
 
 	public ScanResultSummaryInfo() {
 		super();
@@ -68,6 +74,22 @@ public class ScanResultSummaryInfo {
 
 	public void setSize(String size) {
 		this.size = size;
+	}
+
+	public List<ScanResultExtensionItem> getExtensionItems() {
+		return extensionItems;
+	}
+
+	public void setExtensionItems(List<ScanResultExtensionItem> extensionItems) {
+		this.extensionItems = extensionItems;
+	}
+
+	public List<ScanResultFile> getTopFiles() {
+		return topFiles;
+	}
+
+	public void setTopFiles(List<ScanResultFile> topFiles) {
+		this.topFiles = topFiles;
 	}
 
 }

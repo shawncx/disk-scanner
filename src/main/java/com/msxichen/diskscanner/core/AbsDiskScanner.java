@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -17,12 +18,14 @@ import java.util.regex.Pattern;
 
 import com.msxichen.diskscanner.core.model.DirectoryNode;
 import com.msxichen.diskscanner.core.model.DirectoryTree;
+import com.msxichen.diskscanner.core.model.ExtensionItem;
 import com.msxichen.diskscanner.core.model.FileSnap;
 import com.msxichen.diskscanner.core.model.OutputUnit;
 import com.msxichen.diskscanner.core.model.ScanContext;
 import com.msxichen.diskscanner.core.model.ScanResult;
 import com.msxichen.diskscanner.core.model.ScanResultDirectoryInfo;
 import com.msxichen.diskscanner.core.model.ScanResultDirectoryNode;
+import com.msxichen.diskscanner.core.model.ScanResultExtensionItem;
 import com.msxichen.diskscanner.core.model.ScanResultFile;
 import com.msxichen.diskscanner.core.model.ScanResultFileInfo;
 import com.msxichen.diskscanner.core.model.ScanResultSummaryInfo;
@@ -32,6 +35,7 @@ public abstract class AbsDiskScanner {
 
 	protected PriorityBlockingQueue<FileSnap> fileQueue;
 	protected DirectoryTree dirTree;
+	protected ConcurrentHashMap<String, ExtensionItem> extensionMap;
 	protected AtomicLong fileCount;
 	protected AtomicLong dirCount;
 	protected String[] excludedPaths;
@@ -42,7 +46,7 @@ public abstract class AbsDiskScanner {
 
 	protected Instant startInstant;
 	protected Instant endInstant;
-	
+
 	protected OutputUnit dirUnit;
 	protected OutputUnit fileUnit;
 
@@ -51,6 +55,8 @@ public abstract class AbsDiskScanner {
 	protected static final long DEFAULT_FILE_QUEUE_SIZE = 1000;
 	protected static final int EMPTY_QUEUE_WAIT_COUNT = 3;
 	protected static final long QUEUE_POLLING_INTERVAL_MILLISECOND = 200;
+	
+	private static final int SUMMARY_TOP_FILE_COUNT = 10;
 
 	private ScanResult result;
 
@@ -74,11 +80,12 @@ public abstract class AbsDiskScanner {
 		dirCount = new AtomicLong();
 
 		startInstant = context.getStartInstant();
-		
+
 		dirUnit = context.getDirOutputUnit();
 		fileUnit = context.getFileOutputUnit();
 
 		dirTree = new DirectoryTree(context.getBaseDir(), true);
+		extensionMap = new ConcurrentHashMap<String, ExtensionItem>();
 		fileQueueSize = context.getFileTopCount() <= 0 ? DEFAULT_FILE_QUEUE_SIZE : context.getFileTopCount();
 
 		excludedPaths = context.getExcludedPaths();
@@ -95,61 +102,80 @@ public abstract class AbsDiskScanner {
 		File baseDir = new File(context.getBaseDir());
 		candidates.offer(new FileSnap(baseDir));
 		for (int i = 0; i < context.getThreadNum(); i++) {
-			consumerPool.submit(new FileProcessor(candidates, fileQueue, dirTree, fileCount, dirCount, excludedPatterns,
-					fileQueueSize));
+			consumerPool.submit(new FileProcessor(candidates, fileQueue, dirTree, extensionMap, fileCount, dirCount,
+					excludedPatterns, fileQueueSize));
 		}
 	}
 
 	protected void onFinish() {
 		consumerPool.shutdownNow();
 		endInstant = Instant.now();
-
+		
+		List<ScanResultExtensionItem> resExtensionItems = new ArrayList<>();
+		for (ExtensionItem item : extensionMap.values()) {
+			resExtensionItems.add(
+					new ScanResultExtensionItem(item.getExtension(), item.getSizeInByteValue(), item.getCountValue()));
+		}
+		Collections.sort(resExtensionItems, new Comparator<ScanResultExtensionItem>() {
+			public int compare(ScanResultExtensionItem a, ScanResultExtensionItem b) {
+				return b.getSizeInByte() - a.getSizeInByte() > 0 ? 1 : -1;
+			}
+		});
+		
+		List<FileSnap> topFiles = new ArrayList<>();
+		List<ScanResultFile> resTopFiles = new ArrayList<>();
+		while (!fileQueue.isEmpty()) {
+			topFiles.add(fileQueue.poll());
+		}
+		Collections.reverse(topFiles);
+		for (FileSnap snap : topFiles) {
+			ScanResultFile file = new ScanResultFile();
+			file.setAbsolutePath(snap.getAbsolutePath());
+			file.setSize(Utilities.formatSize(fileUnit, snap.getSizeInByte()));
+			file.setSizeInByte(snap.getSizeInByte());
+			resTopFiles.add(file);
+		}
+		
 		result = new ScanResult();
-		result.setSummaryInfo(buildSummaryInfo());
-		result.setFileInfo(buildFileInfo());
-		result.setDirectoryInfo(buildDirectoryInfo());
+		result.setSummaryInfo(buildSummaryInfo(resExtensionItems, resTopFiles));
+		result.setFileInfo(buildFileInfo(resTopFiles));
+		result.setDirectoryInfo(buildDirectoryInfo(resExtensionItems));
 	}
 
-	private ScanResultSummaryInfo buildSummaryInfo() {
+	private ScanResultSummaryInfo buildSummaryInfo(List<ScanResultExtensionItem> resExtensionItems, List<ScanResultFile> resTopFiles) {
 		ScanResultSummaryInfo info = new ScanResultSummaryInfo();
 		info.setBaseDir(dirTree.getRoot().getAbsolutePath());
 		info.setDirCount(dirCount.get());
 		info.setExcludedPaths(excludedPaths);
 		info.setFileCount(fileCount.get());
 		info.setSizeInByte(dirTree.getRoot().getSizeInByte());
-		info.setTimeCostInSecond(Duration.between(startInstant, endInstant).toSeconds());
+		info.setTimeCostInSecond(Duration.between(startInstant, endInstant).getSeconds());
 		info.setSize(Utilities.formatSize(dirUnit, dirTree.getRoot().getSizeInByte()));
+		info.setExtensionItems(resExtensionItems);
+		for (int i = 0; i < SUMMARY_TOP_FILE_COUNT && i < resTopFiles.size(); i++) {
+			info.getTopFiles().add(resTopFiles.get(i));
+		}
 		return info;
 	}
 
-	private ScanResultFileInfo buildFileInfo() {
-		List<FileSnap> list = new ArrayList<FileSnap>();
-		while (!fileQueue.isEmpty()) {
-			list.add(fileQueue.poll());
-		}
-
-		Collections.reverse(list);
+	private ScanResultFileInfo buildFileInfo(List<ScanResultFile> resTopFiles) {
 		ScanResultFileInfo info = new ScanResultFileInfo();
-		for (FileSnap snap : list) {
-			ScanResultFile file = new ScanResultFile();
-			file.setAbsolutePath(snap.getAbsolutePath());
-			file.setSize(Utilities.formatSize(fileUnit, snap.getSizeInByte()));
-			file.setSizeInByte(snap.getSizeInByte());
-			info.getFiles().add(file);
-		}
+		info.setFiles(resTopFiles);
 		return info;
 	}
 
-	private ScanResultDirectoryInfo buildDirectoryInfo() {
+	private ScanResultDirectoryInfo buildDirectoryInfo(List<ScanResultExtensionItem> resExtensionItems) {
 		ScanResultDirectoryNode resRoot = new ScanResultDirectoryNode();
 		resRoot.setAbsolutePath(dirTree.getRoot().getAbsolutePath());
 		resRoot.setSizeInByte(dirTree.getRoot().getSizeInByte());
+		resRoot.setExtension(dirTree.getRoot().getExtension());
 		resRoot.setSize(Utilities.formatSize(dirUnit, dirTree.getRoot().getSizeInByte()));
 		resRoot.setDirectory(dirTree.getRoot().isDirectory());
 		buildScanResultDirectoryTree(resRoot, dirTree.getRoot());
 
 		ScanResultDirectoryInfo info = new ScanResultDirectoryInfo();
 		info.setRoot(resRoot);
+		info.setExtensionItems(resExtensionItems);
 		return info;
 	}
 
@@ -165,6 +191,7 @@ public abstract class AbsDiskScanner {
 			resChild.setSizeInByte(dirChild.getSizeInByte());
 			resChild.setSize(Utilities.formatSize(dirUnit, dirChild.getSizeInByte()));
 			resChild.setDirectory(dirChild.isDirectory());
+			resChild.setExtension(dirChild.getExtension());
 			resChildren.add(resChild);
 		}
 		Collections.sort(resChildren, SCAN_RES_DIR_NODE_REV_COMP);

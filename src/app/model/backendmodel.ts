@@ -28,6 +28,12 @@ declare module Model {
     progress: ScanProgress;
   }
 
+  export interface ExtensionItem {
+    extension: string;
+    sizeInByte: number;
+    count: number;
+  }
+
   export interface GetSummaryInfoResponse {
     info: SummaryInfo;
   }
@@ -40,6 +46,8 @@ declare module Model {
     size: string;
     baseDir: string;
     excludedPaths: string[];
+    extensionItems: ExtensionItem[];
+    topFiles: FileItem[];
   }
 
   export interface GetDirectoryInfoResponse {
@@ -48,6 +56,7 @@ declare module Model {
 
   export interface DirectoryInfo {
     root: DirectoryTreeNode;
+    extensionItems: ExtensionItem[];
   }
 
   export interface DirectoryTreeNode {
@@ -55,6 +64,7 @@ declare module Model {
     sizeInByte: number;
     size: string;
     directory: boolean;
+    extension: string;
     children: DirectoryTreeNode[];
   }
 

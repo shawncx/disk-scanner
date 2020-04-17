@@ -1,11 +1,13 @@
 package com.msxichen.diskscanner.core.model;
 
+import com.msxichen.diskscanner.io.Utilities;
+
 public class DirectoryTree {
 
 	private DirectoryNode root;
 
 	public DirectoryTree(String basePath, boolean isDirectory) {
-		root = new DirectoryNode(basePath, isDirectory);
+		root = new DirectoryNode(basePath, isDirectory, null);
 	}
 
 	public void increaseSizeDescade(String path, long sizeInByte, boolean isDirectory) {
@@ -30,8 +32,9 @@ public class DirectoryTree {
 		}
 		StringBuilder nextPath = path.append("\\").append(pathSegs[pathIndex]);
 
-		node.getChildern().putIfAbsent(nextPath.toString(),
-				new DirectoryNode(nextPath.toString(), isDirectory || pathIndex < pathSegs.length - 1));
+		boolean isDir = isDirectory || pathIndex < pathSegs.length - 1;
+		String extension = isDir ? null : Utilities.getExtension(pathSegs[pathSegs.length - 1]);
+		node.getChildern().putIfAbsent(nextPath.toString(), new DirectoryNode(nextPath.toString(), isDir, extension));
 		increaseSizeDescade(node.getChildern().get(nextPath.toString()), nextPath, pathSegs, pathIndex + 1, sizeInByte,
 				isDirectory);
 	}

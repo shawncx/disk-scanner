@@ -8,9 +8,43 @@
 .dir-icon {
   width: 1rem;
   height: 1rem;
+  line-height: 0.5;
 }
 
 .search-input {
   margin-left: 1rem;
   margin-bottom: 1rem;
+}
+
+.dirTree-layout-column {
+  flex: none !important;
+  width: 60%;
+}
+
+.dirTree-table-name-column {
+  width: 50%;
+}
+
+.dirTree-layout {
+  /deep/ .layout {
+    min-height: auto;
+  }
+}
+
+.dirTree-table-td {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+.extension-table {
+  width: 100%;
+  font-size: 0.9375rem;
+  font-weight: 400;
+}
+
+.extension-table-checkbox {
+  /deep/ .text {
+    font-size: 0.9375rem !important;
+    font-weight: 400 !important;
+  }
 }

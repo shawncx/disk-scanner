@@ -1,48 +1,107 @@
-<!-- <label class="search-label" for="search">Search:</label>
-      <input
-        nbInput
-        [nbFilterInput]="dirTree"
-        id="search"
-        class="search-input"
-      /> -->
+<nb-layout class="dirTree-layout">
+  <nb-layout-column class="dirTree-layout-column">
+    <nb-card>
+      <nb-card-header>Files</nb-card-header>
+      <nb-card-body>
+        <table *ngIf="dirTreeDataSource" [nbTreeGrid]="dirTreeDataSource">
+          <tr
+            nbTreeGridHeaderRow
+            *nbTreeGridHeaderRowDef="dirTreeAllColumns"
+          ></tr>
+          <tr
+            nbTreeGridRow
+            [clickToToggle]="false"
+            *nbTreeGridRowDef="let row; columns: dirTreeAllColumns"
+          ></tr>
 
-<table *ngIf="dirTree" [nbTreeGrid]="dirTree">
-  <tr nbTreeGridHeaderRow *nbTreeGridHeaderRowDef="dirTreeAllColumns"></tr>
-  <tr
-    nbTreeGridRow
-    *nbTreeGridRowDef="let row; columns: dirTreeAllColumns"
-  ></tr>
+          <ng-container [nbTreeGridColumnDef]="dirTreeCustomColumn">
+            <th
+              nbTreeGridHeaderCell
+              *nbTreeGridHeaderCellDef
+              class="dirTree-table-name-column"
+            >
+              {{ dirTreeCustomColumn }}
+            </th>
+            <td
+              nbTreeGridCell
+              *nbTreeGridCellDef="let row"
+              class="dirTree-table-td"
+            >
+              <div>
+                <nb-tree-grid-row-toggle
+                  [expanded]="row.expanded"
+                  (click)="toggleDirectoryTreeRow(row)"
+                  *ngIf="row.data.isDir; else fileIcon"
+                >
+                </nb-tree-grid-row-toggle>
+                <ng-template #fileIcon>
+                  <nb-icon class="dir-icon" icon="file-text-outline"></nb-icon>
+                </ng-template>
+                <span>{{ row.data[dirTreeCustomColumn] }}</span>
+              </div>
+              <span class="dir-name-sub-title">{{
+                row.data.absolutePath
+              }}</span>
+            </td>
+          </ng-container>
 
-  <ng-container [nbTreeGridColumnDef]="dirTreeCustomColumn">
-    <th nbTreeGridHeaderCell *nbTreeGridHeaderCellDef>
-      {{ dirTreeCustomColumn }}
-    </th>
-    <td nbTreeGridCell *nbTreeGridCellDef="let row">
-      <div>
-        <nb-tree-grid-row-toggle
-          [expanded]="row.expanded"
-          *ngIf="row.data.isDir; else fileIcon"
-        >
-        </nb-tree-grid-row-toggle>
-        <ng-template #fileIcon>
-          <nb-icon class="dir-icon" icon="file-text-outline"></nb-icon>
-        </ng-template>
-        <span>{{ row.data[dirTreeCustomColumn] }}</span>
-      </div>
-      <span class="dir-name-sub-title">{{ row.data.absolutePath }}</span>
-    </td>
-  </ng-container>
-
-  <ng-container
-    *ngFor="let column of dirTreeDefaultColumns; let index = index"
-    [nbTreeGridColumnDef]="column"
-    [showOn]="getDirTreeShowOn(index)"
-  >
-    <th nbTreeGridHeaderCell *nbTreeGridHeaderCellDef>
-      {{ column }}
-    </th>
-    <td nbTreeGridCell *nbTreeGridCellDef="let row">
-      {{ row.data[column] || '-' }}
-    </td>
-  </ng-container>
-</table>
+          <ng-container
+            *ngFor="let column of dirTreeDefaultColumns; let index = index"
+            [nbTreeGridColumnDef]="column"
+            [showOn]="getDirTreeShowOn(index)"
+          >
+            <th nbTreeGridHeaderCell *nbTreeGridHeaderCellDef>
+              {{ column }}
+            </th>
+            <td nbTreeGridCell *nbTreeGridCellDef="let row">
+              {{ row.data[column] || '-' }}
+            </td>
+          </ng-container>
+        </table>
+      </nb-card-body>
+    </nb-card>
+  </nb-layout-column>
+  <nb-layout-column>
+    <nb-card>
+      <nb-card-header>Extensions</nb-card-header>
+      <nb-card-body>
+        <table *ngIf="extensionListItems" class="extension-table">
+          <tr>
+            <th>
+              Extension
+            </th>
+            <th>
+              Percentage
+            </th>
+            <th>
+              Size
+            </th>
+            <th>
+              Count
+            </th>
+          </tr>
+          <tr *ngFor="let item of extensionListItems">
+            <td>
+              <nb-checkbox
+                [(checked)]="item.included"
+                status="primary"
+                (checkedChange)="toggleExtensionItem(item)"
+                class="extension-table-checkbox"
+                >{{ item.extension }}</nb-checkbox
+              >
+            </td>
+            <td>
+              {{ item.percentage }}
+            </td>
+            <td>
+              {{ item.size }}
+            </td>
+            <td>
+              {{ item.count }}
+            </td>
+          </tr>
+        </table>
+      </nb-card-body>
+    </nb-card>
+  </nb-layout-column>
+</nb-layout>

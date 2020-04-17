@@ -8,6 +8,7 @@ import java.io.FileWriter;
 import java.time.Duration;
 import java.time.Instant;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,9 +17,9 @@ import com.msxichen.diskscanner.core.model.ScanContext;
 import com.msxichen.diskscanner.core.model.ScanProgress;
 import com.msxichen.diskscanner.core.model.ScanResult;
 import com.msxichen.diskscanner.io.ScanConfigurationReader;
-import com.msxichen.diskscanner.io.ScanResultLocalWriter;
 import com.msxichen.diskscanner.web.entity.GetScanProgressResponse;
 
+@Ignore
 public class DiskScannerAsyncTest {
 
 	@Test
@@ -46,7 +47,7 @@ public class DiskScannerAsyncTest {
 		}
 
 		Instant st = Instant.now();
-		while (Duration.between(st, Instant.now()).toSeconds() < 60) {
+		while (Duration.between(st, Instant.now()).getSeconds() < 60) {
 			progress = scanner.getProgress();
 			if (progress.isDone()) {
 				break;
@@ -64,11 +65,11 @@ public class DiskScannerAsyncTest {
 		try (BufferedWriter writer = new BufferedWriter(new FileWriter("summary-info-sample.json"))) {
 			writer.write(summaryStr);
 		}
-		try (BufferedWriter writer = new BufferedWriter(new FileWriter("file-info-sample.json"))) {
-			writer.write(fileStr);	
-		}
-		try (BufferedWriter writer = new BufferedWriter(new FileWriter("dir-info-sample.json"))) {
-			writer.write(dirStr);
-		}
+//		try (BufferedWriter writer = new BufferedWriter(new FileWriter("file-info-sample.json"))) {
+//			writer.write(fileStr);	
+//		}
+//		try (BufferedWriter writer = new BufferedWriter(new FileWriter("dir-info-sample.json"))) {
+//			writer.write(dirStr);
+//		}
 	}
 }

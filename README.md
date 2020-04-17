@@ -1,7 +1,8 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-![Disk Scanner](./prod-pic.PNG)
+![Disk Scanner summary](./prod-pic-summary.PNG)
+![Disk Scanner detail](./prod-pic-detail.PNG)
 
 If you want to know size of each directory/file quickly, to figure out why your disk is full, this tool can help you.
 
@@ -13,6 +14,7 @@ It can:
 * [Java](https://www.oracle.com/java/)
 * [maven](https://maven.apache.org/)
 * [Log4j](https://logging.apache.org/log4j/2.x/)
+* [Springboot](https://spring.io/projects/spring-boot)
 * [Node](https://nodejs.org)
 * [Angular](https://angular.io)
 * [Electron](https://www.electronjs.org)
@@ -23,7 +25,7 @@ It can:
 
 ### Prerequisites
 
-1. JDK 13+
+1. JDK 8+
 2. Maven 3.5+
 3. Node 10+
 
@@ -34,15 +36,16 @@ Install necessary library:
 npm install
 ```
 
-Launch backend
+Launch backend (requires port 8080)
 ```
 npm run start:backend
 ```
 
-Open another console, to launch frontend
+Open another console, to launch frontend (requires port 4200)
 ```
 npm run start:frontend
 ```
+
 
 <!-- ### Configuration
 

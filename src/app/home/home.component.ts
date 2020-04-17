@@ -5,20 +5,9 @@ import {
   ChangeDetectorRef,
   ViewChild,
 } from '@angular/core';
-import {
-  NbTreeGridDataSource,
-  NbTreeGridDataSourceBuilder,
-  NbToastrService,
-  NbAccordionItemComponent,
-} from '@nebular/theme';
+import { NbToastrService, NbAccordionItemComponent } from '@nebular/theme';
 import { ScanService, ScanProgress } from '../services/scan.service';
-import {
-  ScanResultService,
-  SummaryInfo,
-  FileItem,
-  DirectoryTreeNode,
-  DirectoryTreeEntry,
-} from '../services/scan-result.service';
+import { ScanResultService } from '../services/scan-result.service';
 import {
   ElectronIpcService,
   ElectronIpcChannel,
@@ -33,7 +22,6 @@ import { interval } from 'rxjs';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HomeComponent implements OnInit {
-  
   @ViewChild('summaryAccordion', { static: false })
   public summaryAccordion: NbAccordionItemComponent;
   @ViewChild('directoryAccordion', { static: false })
@@ -41,13 +29,13 @@ export class HomeComponent implements OnInit {
   @ViewChild('fileAccordion', { static: false })
   public fileAccordion: NbAccordionItemComponent;
 
+  public summaryInfo: Model.SummaryInfo;
+  public fileInfo: Model.FileInfo;
+  public directoryInfo: Model.DirectoryInfo;
+
   public isScanning = false;
 
   public baseDirectory = '';
-
-  public summaryInfo: SummaryInfo;
-  public dirTree: NbTreeGridDataSource<DirectoryTreeNode<DirectoryTreeEntry>>;
-  public files: FileItem[];
 
   public scanProgressValue = 0;
   public scanProgress = '';
@@ -59,9 +47,6 @@ export class HomeComponent implements OnInit {
     private cd: ChangeDetectorRef,
     private electronIpcService: ElectronIpcService,
     private toastrService: NbToastrService,
-    private dataSourceBuilder: NbTreeGridDataSourceBuilder<
-      DirectoryTreeNode<DirectoryTreeEntry>
-    >,
     private scanService: ScanService,
     private scanResultService: ScanResultService
   ) {
@@ -90,11 +75,7 @@ export class HomeComponent implements OnInit {
             .then((progress) => {
               this.updateProgress(progress);
               if (progress.done) {
-                this.fetchScanResult(uuid)
-                  .then(() => this.onScanSucceeded(uuid))
-                  .catch((e) =>
-                    this.onScanFailed(e, 'Fetch scan result failed!')
-                  );
+                this.onScanSucceeded(uuid);
                 this.progressSub.unsubscribe();
               }
             })
@@ -112,10 +93,6 @@ export class HomeComponent implements OnInit {
     this.scanProgressValue = 0;
     this.scanProgress = '0% (0/0)';
 
-    this.summaryAccordion.close();
-    this.directoryAccordion.close();
-    this.fileAccordion.close();
-
     this.isScanning = true;
 
     this.cd.detectChanges();
@@ -127,16 +104,12 @@ export class HomeComponent implements OnInit {
       this.scanResultService.getDirectoryInfo(uuid),
       this.scanResultService.getFileInfo(uuid),
     ])
-      .then(([summaryInfo, dirRoot, files]) => {
+      .then(([summaryInfo, directoryInfo, fileInfo]) => {
         this.summaryInfo = summaryInfo;
-        this.dirTree = this.dataSourceBuilder.create([dirRoot]);
-        this.files = files;
+        this.directoryInfo = directoryInfo;
+        this.fileInfo = fileInfo;
 
         this.scanProgressStatus = 'success';
-
-        this.summaryAccordion.open();
-        this.directoryAccordion.open();
-        this.fileAccordion.open();
 
         this.isScanning = false;
       })
@@ -166,18 +139,6 @@ export class HomeComponent implements OnInit {
     this.cd.detectChanges();
   }
 
-  private async fetchScanResult(uuid: string): Promise<void> {
-    this.scanResultService.getSummaryInfo(uuid).then((summary) => {
-      this.summaryInfo = summary;
-    });
-    this.scanResultService.getDirectoryInfo(uuid).then((root) => {
-      this.dirTree = this.dataSourceBuilder.create([root]);
-    });
-    this.scanResultService
-      .getFileInfo(uuid)
-      .then((files) => (this.files = files));
-  }
-
   private async updateProgress(progress: ScanProgress): Promise<void> {
     const processedNum = progress.fileProcessed + progress.dirProcessed;
     const totalNum = processedNum + progress.candidateInQueue;
@@ -192,7 +153,19 @@ export class HomeComponent implements OnInit {
     this.cd.detectChanges();
   }
 
-  ngOnInit() {}
+  ngOnInit() {
+    // For test
+    // Promise.all([
+    //   this.scanResultService.getFakeDirectoryInfo(),
+    //   this.scanResultService.getFakeSummaryInfo(),
+    //   this.scanResultService.getFakeFileInfo()
+    // ]).then(([dirInfo, summaryInfo, fileInfo]) => {
+    //   this.directoryInfo = dirInfo;
+    //   this.summaryInfo = summaryInfo;
+    //   this.fileInfo = fileInfo;
+    //   this.cd.detectChanges();
+    // });
+  }
 
   public openDirectoryWindow() {
     this.electronIpcService.send(ElectronIpcChannel.OpenDirecotryDialog);

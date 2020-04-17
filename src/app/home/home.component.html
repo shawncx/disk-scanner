@@ -7,56 +7,50 @@
           <label class="label">Base directory</label>
         </td>
         <td>
-          <button nbButton size="small" (click)="openDirectoryWindow(dialog)" [disabled]="isScanning">Select</button>
-          <span class="base-directory-span">{{baseDirectory}}</span>
+          <button
+            nbButton
+            size="small"
+            (click)="openDirectoryWindow(dialog)"
+            [disabled]="isScanning"
+          >
+            Select
+          </button>
+          <span class="base-directory-span">{{ baseDirectory }}</span>
         </td>
       </tr>
     </table>
   </nb-card-body>
   <nb-card-footer>
-      <table class="config-table">
-        <tr>
-          <td class="config-label-column">
-            <button nbButton outline (click)="startScan()" [disabled]="isScanning">Start</button>
-          </td>
-          <td>
-            <nb-progress-bar
-              *ngIf="scanProgress.length > 0"
-              [value]="scanProgressValue"
-              [status]="scanProgressStatus"
-              >{{ scanProgress }}</nb-progress-bar
-            >
-          </td>
-        </tr>
-      </table>
+    <table class="config-table">
+      <tr>
+        <td class="config-label-column">
+          <button
+            nbButton
+            outline
+            (click)="startScan()"
+            [disabled]="isScanning"
+          >
+            Start
+          </button>
+        </td>
+        <td>
+          <nb-progress-bar
+            *ngIf="scanProgress.length > 0"
+            [value]="scanProgressValue"
+            [status]="scanProgressStatus"
+            >{{ scanProgress }}</nb-progress-bar
+          >
+        </td>
+      </tr>
+    </table>
   </nb-card-footer>
 </nb-card>
 
-<nb-accordion multi>
-  <nb-accordion-item #summaryAccordion>
-    <nb-accordion-item-header>
-      Summary
-    </nb-accordion-item-header>
-    <nb-accordion-item-body>
-      <app-summary-info [summaryInfo]="summaryInfo" ></app-summary-info>
-    </nb-accordion-item-body>
-  </nb-accordion-item>
-
-  <nb-accordion-item #directoryAccordion>
-    <nb-accordion-item-header>
-      Directory Tree
-    </nb-accordion-item-header>
-    <nb-accordion-item-body>
-      <app-directory-info [dirTree]="dirTree" ></app-directory-info>
-    </nb-accordion-item-body>
-  </nb-accordion-item>
-
-  <nb-accordion-item #fileAccordion>
-    <nb-accordion-item-header>
-      Top Files
-    </nb-accordion-item-header>
-    <nb-accordion-item-body>
-      <app-file-info [files]="files" ></app-file-info>
-    </nb-accordion-item-body>
-  </nb-accordion-item>
-</nb-accordion>
+<nb-tabset>
+  <nb-tab tabTitle="Summary">
+    <app-summary-info [summaryInfo]="summaryInfo"></app-summary-info>
+  </nb-tab>
+  <nb-tab tabTitle="Detail">
+    <app-directory-info [directoryInfo]="directoryInfo"></app-directory-info>
+  </nb-tab>
+</nb-tabset>

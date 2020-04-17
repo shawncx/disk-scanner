@@ -10,6 +10,9 @@ import {
   NbAccordionModule,
   NbListModule,
   NbProgressBarModule,
+  NbLayoutModule,
+  NbCheckboxModule,
+  NbTabsetModule,
 } from '@nebular/theme';
 
 import { HomeRoutingModule } from './home-routing.module';
@@ -17,6 +20,7 @@ import { HomeComponent } from './home.component';
 import { DirectoryInfoComponent } from '../components/directory-info/directory-info.component';
 import { FileInfoComponent } from '../components/file-info/file-info.component';
 import { SummaryInfoComponent } from '../components/summary-info/summary-info.component';
+import { ChartsModule } from 'ng2-charts';
 
 @NgModule({
   declarations: [
@@ -27,9 +31,12 @@ import { SummaryInfoComponent } from '../components/summary-info/summary-info.co
   ],
   imports: [
     CommonModule,
+    ChartsModule,
     NbCardModule,
     NbButtonModule,
     NbDialogModule.forRoot(),
+    NbLayoutModule,
+    NbTabsetModule,
     HomeRoutingModule,
     NbIconModule,
     NbInputModule,
@@ -37,6 +44,7 @@ import { SummaryInfoComponent } from '../components/summary-info/summary-info.co
     NbAccordionModule,
     NbListModule,
     NbProgressBarModule,
+    NbCheckboxModule
   ],
 })
 export class HomeModule {}
