@@ -93,10 +93,6 @@ export class HomeComponent implements OnInit {
     this.scanProgressValue = 0;
     this.scanProgress = '0% (0/0)';
 
-    // this.summaryAccordion.close();
-    // this.directoryAccordion.close();
-    // this.fileAccordion.close();
-
     this.isScanning = true;
 
     this.cd.detectChanges();
@@ -114,10 +110,6 @@ export class HomeComponent implements OnInit {
         this.fileInfo = fileInfo;
 
         this.scanProgressStatus = 'success';
-
-        // this.summaryAccordion.open();
-        // this.directoryAccordion.open();
-        // this.fileAccordion.open();
 
         this.isScanning = false;
       })
@@ -162,16 +154,17 @@ export class HomeComponent implements OnInit {
   }
 
   ngOnInit() {
-    Promise.all([
-      this.scanResultService.getFakeDirectoryInfo(),
-      this.scanResultService.getFakeSummaryInfo(),
-      this.scanResultService.getFakeFileInfo()
-    ]).then(([dirInfo, summaryInfo, fileInfo]) => {
-      this.directoryInfo = dirInfo;
-      this.summaryInfo = summaryInfo;
-      this.fileInfo = fileInfo;
-      this.cd.detectChanges();
-    });
+    // For test
+    // Promise.all([
+    //   this.scanResultService.getFakeDirectoryInfo(),
+    //   this.scanResultService.getFakeSummaryInfo(),
+    //   this.scanResultService.getFakeFileInfo()
+    // ]).then(([dirInfo, summaryInfo, fileInfo]) => {
+    //   this.directoryInfo = dirInfo;
+    //   this.summaryInfo = summaryInfo;
+    //   this.fileInfo = fileInfo;
+    //   this.cd.detectChanges();
+    // });
   }
 
   public openDirectoryWindow() {

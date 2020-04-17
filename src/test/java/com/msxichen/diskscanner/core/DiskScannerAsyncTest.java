@@ -17,7 +17,6 @@ import com.msxichen.diskscanner.core.model.ScanContext;
 import com.msxichen.diskscanner.core.model.ScanProgress;
 import com.msxichen.diskscanner.core.model.ScanResult;
 import com.msxichen.diskscanner.io.ScanConfigurationReader;
-import com.msxichen.diskscanner.io.ScanResultLocalWriter;
 import com.msxichen.diskscanner.web.entity.GetScanProgressResponse;
 
 @Ignore

@@ -36,7 +36,7 @@
     "lint": "ng lint",
     "e2e": "ng e2e",
     "start:frontend": "ng build --progress --base-href ./ && electron .",
-    "start:backend": "mvn spring-boot:run"
+    "start:backend": "mvn -Dmaven.test.skip=true spring-boot:run"
   },
   "devDependencies": {
     "@angular/cli": "~7.0.2",
