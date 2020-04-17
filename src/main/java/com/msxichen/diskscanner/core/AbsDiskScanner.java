@@ -151,7 +151,7 @@ public abstract class AbsDiskScanner {
 		info.setExcludedPaths(excludedPaths);
 		info.setFileCount(fileCount.get());
 		info.setSizeInByte(dirTree.getRoot().getSizeInByte());
-		info.setTimeCostInSecond(Duration.between(startInstant, endInstant).toSeconds());
+		info.setTimeCostInSecond(Duration.between(startInstant, endInstant).getSeconds());
 		info.setSize(Utilities.formatSize(dirUnit, dirTree.getRoot().getSizeInByte()));
 		info.setExtensionItems(resExtensionItems);
 		for (int i = 0; i < SUMMARY_TOP_FILE_COUNT && i < resTopFiles.size(); i++) {

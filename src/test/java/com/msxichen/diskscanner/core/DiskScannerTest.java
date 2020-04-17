@@ -9,6 +9,7 @@ import com.msxichen.diskscanner.core.model.ScanResult;
 import com.msxichen.diskscanner.io.ScanConfigurationReader;
 import com.msxichen.diskscanner.io.ScanResultLocalWriter;
 
+@Ignore
 public class DiskScannerTest {
 
 	@Test

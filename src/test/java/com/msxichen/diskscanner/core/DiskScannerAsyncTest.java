@@ -8,6 +8,7 @@ import java.io.FileWriter;
 import java.time.Duration;
 import java.time.Instant;
 
+import org.junit.Ignore;
 import org.junit.Test;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -19,18 +20,12 @@ import com.msxichen.diskscanner.io.ScanConfigurationReader;
 import com.msxichen.diskscanner.io.ScanResultLocalWriter;
 import com.msxichen.diskscanner.web.entity.GetScanProgressResponse;
 
+@Ignore
 public class DiskScannerAsyncTest {
 
 	@Test
 	public void testScanExcludedDir() throws Exception {
 		runScan("src/test/resources/testScanExcludedDir.json");
-	}
-	
-	@Test
-	public void test() {
-		String path = "a\\b\\c";
-		
-		System.out.println(path.lastIndexOf("\\"));
 	}
 
 	private void runScan(String configPath) throws Exception {
@@ -53,7 +48,7 @@ public class DiskScannerAsyncTest {
 		}
 
 		Instant st = Instant.now();
-		while (Duration.between(st, Instant.now()).toSeconds() < 60) {
+		while (Duration.between(st, Instant.now()).getSeconds() < 60) {
 			progress = scanner.getProgress();
 			if (progress.isDone()) {
 				break;
