@@ -75,3 +75,9 @@ testem.log
 # System Files
 .DS_Store
 Thumbs.db
+
+# Runnable jar
+!/target
+/target/*
+!/target/disk-scanner.jar
+/target/
