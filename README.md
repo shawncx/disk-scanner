@@ -7,8 +7,8 @@
 If you want to know size of each directory/file quickly, to figure out why your disk is full, this tool can help you.
 
 It can:
-* List size of all directories/files under specific directory
-<!-- * Use wildcard to exlcude files/folders -->
+* List size/count of all files under specific directory
+* Filter files with extensions
 
 ### Built With
 * [Java](https://www.oracle.com/java/)
