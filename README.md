@@ -45,6 +45,8 @@ Open another console, to launch frontend (requires port 4200)
 npm run start:frontend
 ```
 
+## Develop
+
 ### Build
 
 Build backend jar
