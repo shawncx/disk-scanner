@@ -17,22 +17,24 @@ public class DiskScanner extends AbsDiskScanner {
 		onInitialize(context);
 		onLaunchScan(context);
 
-		int emptyQueueCount = 0;
+		int emptyWorkingPathSetCount = 0;
 		while (true) {
 			LOGGER.trace("Candidate queue size: " + candidates.size());
-			if (candidates.size() == 0) {
-				emptyQueueCount++;
+			LOGGER.trace("Working path set size: " + workingPaths.size());
+			
+			if (workingPaths.size() == 0) {
+				emptyWorkingPathSetCount++;
 			} else {
-				emptyQueueCount = 0;
+				emptyWorkingPathSetCount = 0;
 			}
-			if (emptyQueueCount == EMPTY_QUEUE_WAIT_COUNT) {
-				LOGGER.trace("Candidate queue keeps empty. Finish!");
+			if (emptyWorkingPathSetCount == EMPTY_WORKING_PATH_SET_AWAIT_COUNT) {
+				LOGGER.trace("Working path set keeps empty. Finish!");
 				onFinish();
 				break;
 			}
 
 			try {
-				TimeUnit.MILLISECONDS.sleep(QUEUE_POLLING_INTERVAL_MILLISECOND);
+				TimeUnit.MILLISECONDS.sleep(SCAN_PROGRESS_POLLING_INTERVAL_MILLISECOND);
 			} catch (InterruptedException e) {
 				LOGGER.error(e);
 			}

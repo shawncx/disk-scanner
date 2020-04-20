@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -43,6 +44,7 @@ public abstract class AbsDiskScanner {
 
 	protected ExecutorService consumerPool;
 	protected BlockingQueue<FileSnap> candidates;
+	protected Set<String> workingPaths = ConcurrentHashMap.newKeySet();
 
 	protected Instant startInstant;
 	protected Instant endInstant;
@@ -53,8 +55,10 @@ public abstract class AbsDiskScanner {
 	protected long fileQueueSize = DEFAULT_FILE_QUEUE_SIZE;
 
 	protected static final long DEFAULT_FILE_QUEUE_SIZE = 1000;
-	protected static final int EMPTY_QUEUE_WAIT_COUNT = 3;
-	protected static final long QUEUE_POLLING_INTERVAL_MILLISECOND = 200;
+	
+	protected static final int EMPTY_WORKING_PATH_SET_AWAIT_COUNT = 3;
+	
+	protected static final long SCAN_PROGRESS_POLLING_INTERVAL_MILLISECOND = 500;
 	
 	private static final int SUMMARY_TOP_FILE_COUNT = 10;
 
@@ -103,7 +107,7 @@ public abstract class AbsDiskScanner {
 		candidates.offer(new FileSnap(baseDir));
 		for (int i = 0; i < context.getThreadNum(); i++) {
 			consumerPool.submit(new FileProcessor(candidates, fileQueue, dirTree, extensionMap, fileCount, dirCount,
-					excludedPatterns, fileQueueSize));
+					excludedPatterns, fileQueueSize, workingPaths));
 		}
 	}
 

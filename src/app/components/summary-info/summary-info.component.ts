@@ -95,7 +95,7 @@ export class SummaryInfoComponent implements OnInit {
       timeCostInSecond: info.timeCostInSecond,
       fileCount: info.fileCount,
       dirCount: info.dirCount,
-      size: info.size,
+      size: getFileSize(info.sizeInByte),
       baseDir: info.baseDir,
       excludedPaths: info.excludedPaths,
     };
@@ -113,18 +113,18 @@ export class SummaryInfoComponent implements OnInit {
         topSizeExtensionItems,
         topCountExtensionItems,
       ] = this.prepareExtensionChartItems(info.extensionItems);
-      if (this.extensionSizeChart) {
-        this.updateChart(this.extensionSizeChart, topSizeExtensionItems);
+      if (this._extensionSizeChart) {
+        this.updateChart(this._extensionSizeChart, topSizeExtensionItems);
       } else {
-        this.extensionSizeChart = this.createChart(
+        this._extensionSizeChart = this.createChart(
           this.extensionSizeChartRef.nativeElement,
           topSizeExtensionItems
         );
       }
-      if (this.extensionCountChart) {
-        this.updateChart(this.extensionCountChart, topCountExtensionItems);
+      if (this._extensionCountChart) {
+        this.updateChart(this._extensionCountChart, topCountExtensionItems);
       } else {
-        this.extensionCountChart = this.createChart(
+        this._extensionCountChart = this.createChart(
           this.extensionCountChartRef.nativeElement,
           topCountExtensionItems
         );
@@ -150,8 +150,8 @@ export class SummaryInfoComponent implements OnInit {
   public pieChartLegend = true;
   public pieChartPlugins = [];
 
-  private extensionSizeChart: Chart;
-  private extensionCountChart: Chart;
+  private _extensionSizeChart: Chart;
+  private _extensionCountChart: Chart;
 
   constructor() {}
 

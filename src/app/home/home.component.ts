@@ -3,9 +3,8 @@ import {
   OnInit,
   ChangeDetectionStrategy,
   ChangeDetectorRef,
-  ViewChild,
 } from '@angular/core';
-import { NbToastrService, NbAccordionItemComponent } from '@nebular/theme';
+import { NbToastrService } from '@nebular/theme';
 import { ScanService, ScanProgress } from '../services/scan.service';
 import { ScanResultService } from '../services/scan-result.service';
 import {
@@ -22,12 +21,6 @@ import { interval } from 'rxjs';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HomeComponent implements OnInit {
-  @ViewChild('summaryAccordion', { static: false })
-  public summaryAccordion: NbAccordionItemComponent;
-  @ViewChild('directoryAccordion', { static: false })
-  public directoryAccordion: NbAccordionItemComponent;
-  @ViewChild('fileAccordion', { static: false })
-  public fileAccordion: NbAccordionItemComponent;
 
   public summaryInfo: Model.SummaryInfo;
   public fileInfo: Model.FileInfo;
@@ -41,47 +34,47 @@ export class HomeComponent implements OnInit {
   public scanProgress = '';
   public scanProgressStatus = 'info';
 
-  private progressSub: Subscription;
+  private _progressSub: Subscription;
 
   constructor(
-    private cd: ChangeDetectorRef,
-    private electronIpcService: ElectronIpcService,
-    private toastrService: NbToastrService,
-    private scanService: ScanService,
-    private scanResultService: ScanResultService
+    private _cd: ChangeDetectorRef,
+    private _electronIpcService: ElectronIpcService,
+    private _toastrService: NbToastrService,
+    private _scanService: ScanService,
+    private _scanResultService: ScanResultService
   ) {
-    electronIpcService.on(
+    this._electronIpcService.on(
       ElectronIpcChannel.CloseDirecotryDialog,
       (event, args) => {
         this.baseDirectory = args ? args[0] : args;
-        this.cd.detectChanges();
+        this._cd.detectChanges();
       }
     );
   }
 
   public startScan(): void {
     if (!this.baseDirectory) {
-      this.toastrService.danger('Base directory cannot be empty!', {
+      this._toastrService.danger('Base directory cannot be empty!', {
         duration: 0,
       });
     }
     this.onScanStart();
-    this.scanService
+    this._scanService
       .startScan(this.baseDirectory)
       .then((uuid) => {
-        this.progressSub = interval(500).subscribe(() => {
-          this.scanService
+        this._progressSub = interval(500).subscribe(() => {
+          this._scanService
             .getProgress(uuid)
             .then((progress) => {
               this.updateProgress(progress);
               if (progress.done) {
                 this.onScanSucceeded(uuid);
-                this.progressSub.unsubscribe();
+                this._progressSub.unsubscribe();
               }
             })
             .catch((e) => {
               this.onScanFailed(e, 'Get progress failed! Terminate');
-              this.progressSub.unsubscribe();
+              this._progressSub.unsubscribe();
             });
         });
       })
@@ -95,14 +88,14 @@ export class HomeComponent implements OnInit {
 
     this.isScanning = true;
 
-    this.cd.detectChanges();
+    this._cd.detectChanges();
   }
 
   private onScanSucceeded(uuid: string): void {
     Promise.all([
-      this.scanResultService.getSummaryInfo(uuid),
-      this.scanResultService.getDirectoryInfo(uuid),
-      this.scanResultService.getFileInfo(uuid),
+      this._scanResultService.getSummaryInfo(uuid),
+      this._scanResultService.getDirectoryInfo(uuid),
+      this._scanResultService.getFileInfo(uuid),
     ])
       .then(([summaryInfo, directoryInfo, fileInfo]) => {
         this.summaryInfo = summaryInfo;
@@ -110,12 +103,13 @@ export class HomeComponent implements OnInit {
         this.fileInfo = fileInfo;
 
         this.scanProgressStatus = 'success';
+        this.scanProgress += ' Done';
 
         this.isScanning = false;
       })
       .catch((ex) => {
         const error = ex && ex.error ? ex.error : ex;
-        this.toastrService.danger(
+        this._toastrService.danger(
           JSON.stringify(error, null, 2),
           'Fetch result failed!',
           {
@@ -123,20 +117,20 @@ export class HomeComponent implements OnInit {
           }
         );
       })
-      .finally(() => this.cd.detectChanges());
+      .finally(() => this._cd.detectChanges());
   }
 
   private onScanFailed(ex: any, title: string): void {
     this.scanProgressStatus = 'danger';
 
     const error = ex && ex.error ? ex.error : ex;
-    this.toastrService.danger(JSON.stringify(error, null, 2), title, {
+    this._toastrService.danger(JSON.stringify(error, null, 2), title, {
       duration: 0,
     });
 
     this.isScanning = false;
 
-    this.cd.detectChanges();
+    this._cd.detectChanges();
   }
 
   private async updateProgress(progress: ScanProgress): Promise<void> {
@@ -150,7 +144,7 @@ export class HomeComponent implements OnInit {
       '/' +
       totalNum +
       ')';
-    this.cd.detectChanges();
+    this._cd.detectChanges();
   }
 
   ngOnInit() {
@@ -168,6 +162,6 @@ export class HomeComponent implements OnInit {
   }
 
   public openDirectoryWindow() {
-    this.electronIpcService.send(ElectronIpcChannel.OpenDirecotryDialog);
+    this._electronIpcService.send(ElectronIpcChannel.OpenDirecotryDialog);
   }
 }

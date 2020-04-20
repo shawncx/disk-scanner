@@ -37,7 +37,7 @@
     "e2e": "ng e2e",
     "start:frontend": "ng build --progress --base-href ./ && electron .",
     "start:backend": "java -jar target\\disk-scanner.jar",
-    "start:backend-mvn": "mvn -Dmaven.test.skip=true spring-boot:run"
+    "start:backend-dev": "mvn -Dmaven.test.skip=true spring-boot:run"
   },
   "devDependencies": {
     "@angular/cli": "~7.0.2",
