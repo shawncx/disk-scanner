@@ -80,3 +80,4 @@ Thumbs.db
 !/target
 /target/*
 !/target/disk-scanner.jar
+/target/

@@ -1,6 +1,7 @@
 package com.msxichen.diskscanner.core;
 
 import java.io.File;
+import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.PriorityBlockingQueue;
@@ -24,12 +25,13 @@ public class FileProcessor implements Runnable {
 	private AtomicLong dirCount;
 	private Pattern[] excludedPatterns;
 	private long fileQueueSize;
+	private Set<String> workingSet;
 
 	private static final Logger LOGGER = LogManager.getLogger();
 
 	public FileProcessor(BlockingQueue<FileSnap> candidates, PriorityBlockingQueue<FileSnap> fileQueue,
 			DirectoryTree dirTree, ConcurrentHashMap<String, ExtensionItem> extensionMap, AtomicLong fileCount,
-			AtomicLong dirCount, Pattern[] excludedPatterns, long fileQueueSize) {
+			AtomicLong dirCount, Pattern[] excludedPatterns, long fileQueueSize, Set<String> workingPaths) {
 		this.fileQueue = fileQueue;
 		this.dirTree = dirTree;
 		this.extensionMap = extensionMap;
@@ -38,6 +40,7 @@ public class FileProcessor implements Runnable {
 		this.dirCount = dirCount;
 		this.excludedPatterns = excludedPatterns == null ? new Pattern[0] : excludedPatterns;
 		this.fileQueueSize = fileQueueSize;
+		this.workingSet = workingPaths;
 	}
 
 	public void run() {
@@ -49,6 +52,8 @@ public class FileProcessor implements Runnable {
 				if (isExcluded(file)) {
 					continue;
 				}
+				
+				this.workingSet.add(file.getAbsolutePath());
 
 				if (file.isDirectory()) {
 					dirCount.incrementAndGet();
@@ -61,6 +66,10 @@ public class FileProcessor implements Runnable {
 				LOGGER.trace("FileProcessor is interupted.");
 			} catch (Exception e) {
 				LOGGER.error(e);
+			} finally {
+				if (file != null) {
+					this.workingSet.remove(file.getAbsolutePath());
+				}
 			}
 		}
 	}

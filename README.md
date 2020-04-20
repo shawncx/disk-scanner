@@ -26,8 +26,7 @@ It can:
 ### Prerequisites
 
 1. JDK 8+
-2. Maven 3.5+
-3. Node 10+
+2. Node 10+
 
 ### Quick start
 
@@ -46,6 +45,17 @@ Open another console, to launch frontend (requires port 4200)
 npm run start:frontend
 ```
 
+### Build
+
+Build backend jar
+```
+mvn -Dmaven.test.skip=true clean package spring-boot:repackage
+```
+
+*start:backend* will launch backend from *target/disk-scanner.jar*. To launch from source code, please run
+```
+npm run start:backend-dev
+```
 
 <!-- ### Configuration
 

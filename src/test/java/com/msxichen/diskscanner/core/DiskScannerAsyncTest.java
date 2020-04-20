@@ -4,11 +4,11 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileWriter;
 import java.time.Duration;
 import java.time.Instant;
 
-import org.junit.Ignore;
 import org.junit.Test;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -19,7 +19,7 @@ import com.msxichen.diskscanner.core.model.ScanResult;
 import com.msxichen.diskscanner.io.ScanConfigurationReader;
 import com.msxichen.diskscanner.web.entity.GetScanProgressResponse;
 
-@Ignore
+
 public class DiskScannerAsyncTest {
 
 	@Test
@@ -27,6 +27,14 @@ public class DiskScannerAsyncTest {
 		runScan("src/test/resources/testScanExcludedDir.json");
 	}
 
+	@Test
+	public void test() {
+		File file = new File("\\\\FSU\\Shares\\SSIS");
+		for(String fs : file.list()) {
+			System.out.println(fs);
+		}
+	}
+	
 	private void runScan(String configPath) throws Exception {
 		ScanConfigurationReader reader = new ScanConfigurationReader();
 		ScanConfiguration config = reader.read(configPath);
