@@ -40,7 +40,7 @@ Launch backend (requires port 8080)
 npm run start:backend
 ```
 
-Open another console, to launch frontend (requires port 4200)
+Open another console, to launch frontend
 ```
 npm run start:frontend
 ```
