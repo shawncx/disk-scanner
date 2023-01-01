@@ -4,7 +4,7 @@
   "private": true,
   "main": "main.js",
   "dependencies": {
-    "@angular-devkit/build-angular": "^0.13.0",
+    "@angular-devkit/build-angular": "^15.0.4",
     "@angular/animations": "8.1.1",
     "@angular/cdk": "8.0.2",
     "@angular/common": "8.1.1",
